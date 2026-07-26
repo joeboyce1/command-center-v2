@@ -1,0 +1,54 @@
+==============================================================================
+Betting $100 on the largest NFL underdog each week
+Regular seasons 2021-2025  |  closing lines from nflverse/nfldata
+==============================================================================
+
+MONEYLINE (dog wins outright)
+------------------------------------------------------------------------------
+  Bets placed         104 across 90 weeks
+  Record              13-91   (12.5%)
+  Total staked        $9,000.00
+  Net profit          $-3,622.83
+  ROI                 -40.25%
+  Max drawdown        $-4,110.00
+  Longest losing run  37 bets
+
+  By season:
+    season  record            staked      profit       roi
+    2021    2-17        $     1,800     -324.00    -18.0%
+    2022    5-19        $     1,800      +11.17     +0.6%
+    2023    1-17        $     1,800   -1,290.00    -71.7%
+    2024    5-16        $     1,800     -220.00    -12.2%
+    2025    0-22        $     1,800   -1,800.00   -100.0%
+
+AGAINST THE SPREAD (dog covers)
+------------------------------------------------------------------------------
+  Bets placed         104 across 90 weeks
+  Record              51-52-1   (49.5%)
+  Total staked        $9,000.00
+  Net profit          $-923.70
+  ROI                 -10.26%
+  Max drawdown        $-1,080.26
+  Longest losing run  5 bets
+
+  By season:
+    season  record            staked      profit       roi
+    2021    6-13        $     1,800     -743.01    -41.3%
+    2022    16-7-1      $     1,800     +552.88    +30.7%
+    2023    7-11        $     1,800     -462.55    -25.7%
+    2024    11-10       $     1,800      -82.61     -4.6%
+    2025    11-11       $     1,800     -188.40    -10.5%
+
+Biggest moneyline hits
+------------------------------------------------------------------------------
+  season/wk  underdog     line    odds  matchup         score     profit
+  2021 wk9   JAX         +14.5    +776  BUF @ JAX         6-9    +776.00
+  2022 wk7   CAR           +13    +524  TB @ CAR         3-21    +524.00
+  2021 wk16  HOU         +13.5    +500  LAC @ HOU       29-41    +500.00
+  2023 wk13  CIN           +10    +410  CIN @ JAX       34-31    +410.00
+  2022 wk10  WAS           +11    +405  WAS @ PHI       32-21    +405.00
+  2024 wk2   LV             +9    +350  LV @ BAL        26-23    +350.00
+  2024 wk1   NE             +8    +295  NE @ CIN        16-10    +295.00
+  2024 wk3   WAS          +7.5    +280  WAS @ CIN       38-33    +280.00
+  2022 wk1   PIT          +7.5    +264  PIT @ CIN       23-20    +264.00
+  2022 wk6   PIT           +10    +323  TB @ PIT        18-20    +161.50
