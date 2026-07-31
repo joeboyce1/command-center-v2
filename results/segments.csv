@@ -1,0 +1,224 @@
+market,cut,segment,bets,wins,losses,pushes,win_pct,pnl,roi,t_stat
+MONEYLINE,every underdog,all underdogs,11775,3030,8745,0,0.2573,-113773.59,-0.0966,-4.45
+MONEYLINE,by season,2006,343,84,259,0,0.2449,-3329.34,-0.0971,-0.88
+MONEYLINE,by season,2007,544,153,391,0,0.2812,10522.99,0.1934,1.06
+MONEYLINE,by season,2008,286,71,215,0,0.2483,-5046.75,-0.1765,-1.67
+MONEYLINE,by season,2009,554,134,420,0,0.2419,-11527.07,-0.2081,-3.01
+MONEYLINE,by season,2010,552,127,425,0,0.2301,-11325.09,-0.2052,-2.88
+MONEYLINE,by season,2011,593,148,445,0,0.2496,-3855.68,-0.065,-0.67
+MONEYLINE,by season,2012,621,145,476,0,0.2335,-4750.25,-0.0765,-0.39
+MONEYLINE,by season,2013,625,138,487,0,0.2208,-17863.31,-0.2858,-4.61
+MONEYLINE,by season,2014,653,168,485,0,0.2573,-9359.9,-0.1433,-2.15
+MONEYLINE,by season,2015,661,146,515,0,0.2209,-14024.53,-0.2122,-2.53
+MONEYLINE,by season,2016,655,172,483,0,0.2626,3511.91,0.0536,0.58
+MONEYLINE,by season,2017,656,158,498,0,0.2409,-7583.93,-0.1156,-1.21
+MONEYLINE,by season,2018,672,167,505,0,0.2485,-9248.39,-0.1376,-1.73
+MONEYLINE,by season,2019,665,171,494,0,0.2571,-3314.82,-0.0498,-0.56
+MONEYLINE,by season,2021,683,195,488,0,0.2855,-5256.33,-0.077,-1.18
+MONEYLINE,by season,2022,670,194,476,0,0.2896,4618.83,0.0689,0.87
+MONEYLINE,by season,2023,772,213,559,0,0.2759,-10333.71,-0.1339,-2.19
+MONEYLINE,by season,2024,787,233,554,0,0.2961,-4396.86,-0.0559,-0.87
+MONEYLINE,by season,2025,783,213,570,0,0.272,-11211.37,-0.1432,-2.47
+MONEYLINE,by size of the underdog line,a. +0.5 to +3,2204,1049,1155,0,0.476,6306.45,0.0286,1.24
+MONEYLINE,by size of the underdog line,b. +3.5 to +7,2969,1039,1930,0,0.3499,-2427.76,-0.0082,-0.33
+MONEYLINE,by size of the underdog line,c. +7.5 to +10,1461,365,1096,0,0.2498,-9588.0,-0.0656,-1.54
+MONEYLINE,by size of the underdog line,d. +10.5 to +14,1645,320,1325,0,0.1945,-12814.78,-0.0779,-1.67
+MONEYLINE,by size of the underdog line,e. +14.5 to +21,1905,195,1710,0,0.1024,-50442.5,-0.2648,-5.19
+MONEYLINE,by size of the underdog line,f. +21.5 to +28,1009,52,957,0,0.0515,-32156.0,-0.3187,-3.33
+MONEYLINE,by size of the underdog line,g. +28.5 to +35,403,9,394,0,0.0223,-2851.0,-0.0707,-0.19
+MONEYLINE,by size of the underdog line,h. +35 or more,179,1,178,0,0.0056,-9800.0,-0.5475,-1.21
+MONEYLINE,home / road / neutral,road dog,7094,1700,5394,0,0.2396,-74498.27,-0.105,-3.34
+MONEYLINE,home / road / neutral,home dog,4244,1191,3053,0,0.2806,-39195.32,-0.0924,-3.34
+MONEYLINE,home / road / neutral,neutral site,437,139,298,0,0.3181,-79.99,-0.0018,-0.02
+MONEYLINE,by underdog's conference,Mid-American,1428,350,1078,0,0.2451,-24889.73,-0.1743,-3.82
+MONEYLINE,by underdog's conference,Conference USA,1189,280,909,0,0.2355,-22320.95,-0.1877,-3.4
+MONEYLINE,by underdog's conference,Big Ten,1152,288,864,0,0.25,-17312.55,-0.1503,-2.77
+MONEYLINE,by underdog's conference,ACC,1114,341,773,0,0.3061,812.66,0.0073,0.13
+MONEYLINE,by underdog's conference,SEC,1112,298,814,0,0.268,-12974.97,-0.1167,-2.08
+MONEYLINE,by underdog's conference,Sun Belt,1095,281,814,0,0.2566,-7752.0,-0.0708,-1.11
+MONEYLINE,by underdog's conference,Mountain West,1071,250,821,0,0.2334,-16684.95,-0.1558,-2.43
+MONEYLINE,by underdog's conference,Big 12,1021,286,735,0,0.2801,2647.4,0.0259,0.32
+MONEYLINE,by underdog's conference,American Athletic,803,186,617,0,0.2316,-19193.87,-0.239,-4.31
+MONEYLINE,by underdog's conference,Pac-12,760,205,555,0,0.2697,-3962.23,-0.0521,-0.78
+MONEYLINE,by underdog's conference,FBS Independents,384,100,284,0,0.2604,-4951.09,-0.1289,-1.39
+MONEYLINE,by underdog's conference,Western Athletic,270,49,221,0,0.1815,873.0,0.0323,0.07
+MONEYLINE,by underdog's conference,Big East,204,66,138,0,0.3235,11523.52,0.5649,1.28
+MONEYLINE,by underdog's conference,Pac-10,172,50,122,0,0.2907,412.17,0.024,0.16
+MONEYLINE,by favourite's conference,Big Ten,1504,331,1173,0,0.2201,-33003.99,-0.2194,-4.68
+MONEYLINE,by favourite's conference,SEC,1488,325,1163,0,0.2184,-33901.17,-0.2278,-4.59
+MONEYLINE,by favourite's conference,ACC,1251,372,879,0,0.2974,9386.21,0.075,1.17
+MONEYLINE,by favourite's conference,Big 12,1226,309,917,0,0.252,-6754.74,-0.0551,-0.76
+MONEYLINE,by favourite's conference,Mid-American,1021,300,721,0,0.2938,-7673.91,-0.0752,-1.47
+MONEYLINE,by favourite's conference,Mountain West,932,239,693,0,0.2564,-8637.74,-0.0927,-1.34
+MONEYLINE,by favourite's conference,Conference USA,885,254,631,0,0.287,1965.14,0.0222,0.16
+MONEYLINE,by favourite's conference,Sun Belt,841,257,584,0,0.3056,-2818.73,-0.0335,-0.58
+MONEYLINE,by favourite's conference,Pac-12,838,207,631,0,0.247,-10092.62,-0.1204,-1.93
+MONEYLINE,by favourite's conference,American Athletic,741,170,571,0,0.2294,-20008.05,-0.27,-4.84
+MONEYLINE,by favourite's conference,FBS Independents,395,108,287,0,0.2734,-1451.48,-0.0367,-0.35
+MONEYLINE,by favourite's conference,Big East,254,67,187,0,0.2638,7205.83,0.2837,0.79
+MONEYLINE,by favourite's conference,Western Athletic,214,40,174,0,0.1869,-7920.0,-0.3701,-2.98
+MONEYLINE,by favourite's conference,Pac-10,185,51,134,0,0.2757,-68.33,-0.0037,-0.03
+MONEYLINE,by tier matchup (dog vs fav),P5 dog vs P5 fav,5205,1414,3791,0,0.2717,-33266.31,-0.0639,-2.28
+MONEYLINE,by tier matchup (dog vs fav),G5 dog vs G5 fav,4328,1163,3165,0,0.2687,-42532.55,-0.0983,-2.61
+MONEYLINE,by tier matchup (dog vs fav),G5 dog vs P5 fav,1442,220,1222,0,0.1526,-43942.45,-0.3047,-5.1
+MONEYLINE,by tier matchup (dog vs fav),FCS/other dog vs FCS/other fav,308,94,214,0,0.3052,10902.0,0.354,1.18
+MONEYLINE,by tier matchup (dog vs fav),P5 dog vs G5 fav,293,93,200,0,0.3174,-2203.48,-0.0752,-0.82
+MONEYLINE,by tier matchup (dog vs fav),G5 dog vs FCS/other fav,86,13,73,0,0.1512,-3493.5,-0.4062,-2.42
+MONEYLINE,by tier matchup (dog vs fav),FCS/other dog vs P5 fav,55,18,37,0,0.3273,1390.96,0.2529,0.91
+MONEYLINE,by tier matchup (dog vs fav),P5 dog vs FCS/other fav,45,11,34,0,0.2444,-271.0,-0.0602,-0.19
+MONEYLINE,conference vs non-conference,conference game,8476,2274,6202,0,0.2683,-69029.1,-0.0814,-3.51
+MONEYLINE,conference vs non-conference,non-conference,3299,756,2543,0,0.2292,-44744.49,-0.1356,-2.74
+MONEYLINE,by week,a. weeks 1-2,1339,304,1035,0,0.227,-10460.62,-0.0781,-0.75
+MONEYLINE,by week,b. weeks 3-5,2398,571,1827,0,0.2381,-34257.22,-0.1429,-2.86
+MONEYLINE,by week,c. weeks 6-10,4531,1212,3319,0,0.2675,-37973.06,-0.0838,-2.84
+MONEYLINE,by week,d. week 11+,3374,893,2481,0,0.2647,-31035.23,-0.092,-2.65
+MONEYLINE,by week,e. bowls / playoff,133,50,83,0,0.3759,-47.46,-0.0036,-0.03
+MONEYLINE,venue x line size,home dog a. +0.5 to +3,973,427,546,0,0.4388,-4838.99,-0.0497,-1.44
+MONEYLINE,venue x line size,home dog b. +3.5 to +7,1267,453,814,0,0.3575,1385.67,0.0109,0.28
+MONEYLINE,venue x line size,home dog c. +7.5 to +10,574,137,437,0,0.2387,-6096.0,-0.1062,-1.59
+MONEYLINE,venue x line size,home dog d. +10.5 to +14,556,107,449,0,0.1924,-4941.5,-0.0889,-1.11
+MONEYLINE,venue x line size,home dog e. +14.5 to +21,568,48,520,0,0.0845,-22172.0,-0.3904,-4.54
+MONEYLINE,venue x line size,home dog f. +21.5 to +28,226,17,209,0,0.0752,25.5,0.0011,0.0
+MONEYLINE,venue x line size,home dog g. +28.5 to +35,65,2,63,0,0.0308,-1058.0,-0.1628,-0.27
+MONEYLINE,venue x line size,home dog h. +35 or more,15,0,15,0,0.0,-1500.0,-1.0,0.0
+MONEYLINE,venue x line size,neutral site a. +0.5 to +3,95,52,43,0,0.5474,1689.39,0.1778,1.6
+MONEYLINE,venue x line size,neutral site b. +3.5 to +7,138,59,79,0,0.4275,2298.89,0.1666,1.41
+MONEYLINE,venue x line size,neutral site c. +7.5 to +10,63,7,56,0,0.1111,-3762.5,-0.5972,-4.12
+MONEYLINE,venue x line size,neutral site d. +10.5 to +14,62,13,49,0,0.2097,-632.78,-0.1021,-0.44
+MONEYLINE,venue x line size,neutral site e. +14.5 to +21,47,6,41,0,0.1277,-580.0,-0.1234,-0.36
+MONEYLINE,venue x line size,neutral site f. +21.5 to +28,23,1,22,0,0.0435,-925.0,-0.4022,-0.67
+MONEYLINE,venue x line size,neutral site g. +28.5 to +35,9,1,8,0,0.1111,1832.0,2.0356,0.67
+MONEYLINE,venue x line size,road dog a. +0.5 to +3,1136,570,566,0,0.5018,9456.05,0.0832,2.58
+MONEYLINE,venue x line size,road dog b. +3.5 to +7,1564,527,1037,0,0.337,-6112.32,-0.0391,-1.14
+MONEYLINE,venue x line size,road dog c. +7.5 to +10,824,221,603,0,0.2682,270.5,0.0033,0.06
+MONEYLINE,venue x line size,road dog d. +10.5 to +14,1027,200,827,0,0.1947,-7240.5,-0.0705,-1.19
+MONEYLINE,venue x line size,road dog e. +14.5 to +21,1290,141,1149,0,0.1093,-27690.5,-0.2147,-3.36
+MONEYLINE,venue x line size,road dog f. +21.5 to +28,760,34,726,0,0.0447,-31256.5,-0.4113,-3.97
+MONEYLINE,venue x line size,road dog g. +28.5 to +35,329,6,323,0,0.0182,-3625.0,-0.1102,-0.26
+MONEYLINE,venue x line size,road dog h. +35 or more,164,1,163,0,0.0061,-8300.0,-0.5061,-1.02
+MONEYLINE,rest advantage,a. dog rested 5+ more days,949,265,684,0,0.2792,-4887.33,-0.0515,-0.85
+MONEYLINE,rest advantage,b. dog rested 1-4 more days,1707,438,1269,0,0.2566,-24527.71,-0.1437,-3.12
+MONEYLINE,rest advantage,c. equal rest,5982,1541,4441,0,0.2576,-63991.85,-0.107,-3.88
+MONEYLINE,rest advantage,d. favourite rested 1-4 more,1509,372,1137,0,0.2465,-24016.54,-0.1592,-3.52
+MONEYLINE,rest advantage,e. favourite rested 5+ more,956,269,687,0,0.2814,2644.68,0.0277,0.31
+MONEYLINE,opening -> closing line move,a. dog gave back 1+ pts (bet on dog),2483,661,1822,0,0.2662,-19308.6,-0.0778,-1.33
+MONEYLINE,opening -> closing line move,b. dog gave back 0.5 pt,1045,306,739,0,0.2928,-5793.51,-0.0554,-1.03
+MONEYLINE,opening -> closing line move,c. line never moved,1079,281,798,0,0.2604,-21260.26,-0.197,-4.26
+MONEYLINE,opening -> closing line move,d. dog gained 0.5 pt,1098,288,810,0,0.2623,-1713.24,-0.0156,-0.22
+MONEYLINE,opening -> closing line move,e. dog gained 1+ pts (bet on fav),2822,581,2241,0,0.2059,-43871.64,-0.1555,-3.76
+SPREAD (ATS),every underdog,all underdogs,12625,6240,6170,215,0.5028,-48637.58,-0.0385,-4.57
+SPREAD (ATS),by season,2006,348,168,172,8,0.4941,-1875.87,-0.0539,-1.06
+SPREAD (ATS),by season,2007,552,281,260,11,0.5194,-370.92,-0.0067,-0.17
+SPREAD (ATS),by season,2008,290,142,145,3,0.4948,-1535.18,-0.0529,-0.95
+SPREAD (ATS),by season,2009,566,294,266,6,0.525,109.9,0.0019,0.05
+SPREAD (ATS),by season,2010,562,252,299,11,0.4574,-6941.73,-0.1235,-3.1
+SPREAD (ATS),by season,2011,613,302,303,8,0.4992,-2782.7,-0.0454,-1.18
+SPREAD (ATS),by season,2012,633,313,307,13,0.5048,-2234.91,-0.0353,-0.94
+SPREAD (ATS),by season,2013,640,304,330,6,0.4795,-5252.15,-0.0821,-2.18
+SPREAD (ATS),by season,2014,669,342,320,7,0.5166,-735.5,-0.011,-0.3
+SPREAD (ATS),by season,2015,668,321,338,9,0.4871,-4551.14,-0.0681,-1.85
+SPREAD (ATS),by season,2016,666,341,313,12,0.5214,-208.34,-0.0031,-0.09
+SPREAD (ATS),by season,2017,678,339,325,14,0.5105,-1582.06,-0.0233,-0.64
+SPREAD (ATS),by season,2018,690,347,330,13,0.5126,-1317.68,-0.0191,-0.53
+SPREAD (ATS),by season,2019,685,322,349,14,0.4799,-5513.84,-0.0805,-2.23
+SPREAD (ATS),by season,2020,508,252,246,10,0.506,-1690.91,-0.0333,-0.79
+SPREAD (ATS),by season,2021,731,357,364,10,0.4951,-3945.45,-0.054,-1.54
+SPREAD (ATS),by season,2022,731,380,339,12,0.5285,645.45,0.0088,0.25
+SPREAD (ATS),by season,2023,789,393,381,15,0.5078,-2372.73,-0.0301,-0.89
+SPREAD (ATS),by season,2024,798,398,383,17,0.5096,-2118.18,-0.0265,-0.79
+SPREAD (ATS),by season,2025,808,392,400,16,0.4949,-4363.64,-0.054,-1.62
+SPREAD (ATS),by size of the underdog line,a. +0.5 to +3,2298,1157,1076,65,0.5181,-1856.85,-0.0081,-0.41
+SPREAD (ATS),by size of the underdog line,b. +3.5 to +7,3140,1573,1514,53,0.5096,-8159.84,-0.026,-1.54
+SPREAD (ATS),by size of the underdog line,c. +7.5 to +10,1542,751,767,24,0.4947,-8370.42,-0.0543,-2.25
+SPREAD (ATS),by size of the underdog line,d. +10.5 to +14,1773,875,881,17,0.4983,-8471.78,-0.0478,-2.12
+SPREAD (ATS),by size of the underdog line,e. +14.5 to +21,2031,988,1014,29,0.4935,-11502.59,-0.0566,-2.69
+SPREAD (ATS),by size of the underdog line,f. +21.5 to +28,1078,521,544,13,0.4892,-6985.04,-0.0648,-2.24
+SPREAD (ATS),by size of the underdog line,g. +28.5 to +35,491,241,244,6,0.4969,-2477.2,-0.0505,-1.18
+SPREAD (ATS),by size of the underdog line,h. +35 or more,272,134,130,8,0.5076,-813.85,-0.0299,-0.52
+SPREAD (ATS),home / road / neutral,road dog,7618,3807,3692,119,0.5077,-22545.51,-0.0296,-2.73
+SPREAD (ATS),home / road / neutral,home dog,4560,2199,2272,89,0.4918,-26815.93,-0.0588,-4.2
+SPREAD (ATS),home / road / neutral,neutral site,447,234,206,7,0.5318,723.86,0.0162,0.36
+SPREAD (ATS),by underdog's conference,Mid-American,1488,732,732,24,0.5,-6535.43,-0.0439,-1.79
+SPREAD (ATS),by underdog's conference,Conference USA,1371,653,700,18,0.4826,-10530.56,-0.0768,-3.0
+SPREAD (ATS),by underdog's conference,ACC,1264,632,610,22,0.5089,-3449.9,-0.0273,-1.02
+SPREAD (ATS),by underdog's conference,Big Ten,1208,587,595,26,0.4966,-6024.97,-0.0499,-1.83
+SPREAD (ATS),by underdog's conference,SEC,1186,575,591,20,0.4931,-6721.74,-0.0567,-2.06
+SPREAD (ATS),by underdog's conference,Sun Belt,1175,604,554,17,0.5216,-383.24,-0.0033,-0.12
+SPREAD (ATS),by underdog's conference,Mountain West,1127,562,546,19,0.5072,-3431.16,-0.0304,-1.08
+SPREAD (ATS),by underdog's conference,Big 12,1070,525,520,25,0.5024,-4145.62,-0.0387,-1.34
+SPREAD (ATS),by underdog's conference,American Athletic,864,434,421,9,0.5076,-2555.14,-0.0296,-0.91
+SPREAD (ATS),by underdog's conference,Pac-12,801,385,402,14,0.4892,-5105.99,-0.0637,-1.9
+SPREAD (ATS),by underdog's conference,FBS Independents,426,216,203,7,0.5155,-622.09,-0.0146,-0.32
+SPREAD (ATS),by underdog's conference,Western Athletic,270,143,123,4,0.5376,736.78,0.0273,0.47
+SPREAD (ATS),by underdog's conference,Big East,203,101,95,7,0.5153,-306.78,-0.0151,-0.23
+SPREAD (ATS),by underdog's conference,Pac-10,172,91,78,3,0.5385,438.26,0.0255,0.35
+SPREAD (ATS),by favourite's conference,SEC,1620,778,817,25,0.4878,-10834.03,-0.0669,-2.84
+SPREAD (ATS),by favourite's conference,Big Ten,1588,780,779,29,0.5003,-6861.56,-0.0432,-1.82
+SPREAD (ATS),by favourite's conference,ACC,1427,731,669,27,0.5221,-335.78,-0.0024,-0.09
+SPREAD (ATS),by favourite's conference,Big 12,1294,610,659,25,0.4807,-10337.24,-0.0799,-3.04
+SPREAD (ATS),by favourite's conference,Mid-American,1052,522,514,16,0.5039,-3860.57,-0.0367,-1.25
+SPREAD (ATS),by favourite's conference,Conference USA,1017,509,494,14,0.5075,-3033.57,-0.0298,-1.0
+SPREAD (ATS),by favourite's conference,Mountain West,973,493,461,19,0.5168,-1207.14,-0.0124,-0.41
+SPREAD (ATS),by favourite's conference,Sun Belt,894,465,415,14,0.5284,860.19,0.0096,0.3
+SPREAD (ATS),by favourite's conference,Pac-12,883,421,446,16,0.4856,-6227.84,-0.0705,-2.21
+SPREAD (ATS),by favourite's conference,American Athletic,795,395,390,10,0.5032,-3003.11,-0.0378,-1.12
+SPREAD (ATS),by favourite's conference,FBS Independents,430,226,197,7,0.5343,904.03,0.021,0.46
+SPREAD (ATS),by favourite's conference,Big East,253,118,130,5,0.4758,-2255.79,-0.0892,-1.5
+SPREAD (ATS),by favourite's conference,Western Athletic,214,101,108,5,0.4833,-1583.03,-0.074,-1.14
+SPREAD (ATS),by favourite's conference,Pac-10,185,91,91,3,0.5,-862.16,-0.0466,-0.67
+SPREAD (ATS),by tier matchup (dog vs fav),P5 dog vs P5 fav,5598,2743,2749,106,0.4995,-24986.65,-0.0446,-3.53
+SPREAD (ATS),by tier matchup (dog vs fav),G5 dog vs G5 fav,4622,2319,2233,70,0.5094,-12043.19,-0.0261,-1.87
+SPREAD (ATS),by tier matchup (dog vs fav),G5 dog vs P5 fav,1587,770,796,21,0.4917,-9508.79,-0.0599,-2.52
+SPREAD (ATS),by tier matchup (dog vs fav),P5 dog vs G5 fav,311,160,144,7,0.5263,170.52,0.0055,0.1
+SPREAD (ATS),by tier matchup (dog vs fav),FCS/other dog vs FCS/other fav,306,153,146,7,0.5117,-717.0,-0.0234,-0.43
+SPREAD (ATS),by tier matchup (dog vs fav),G5 dog vs FCS/other fav,86,39,47,0,0.4535,-1146.77,-0.1333,-1.29
+SPREAD (ATS),by tier matchup (dog vs fav),FCS/other dog vs P5 fav,57,33,22,2,0.6,803.03,0.1409,1.15
+SPREAD (ATS),by tier matchup (dog vs fav),P5 dog vs FCS/other fav,46,17,28,1,0.3778,-1254.17,-0.2726,-2.0
+SPREAD (ATS),conference vs non-conference,conference game,9102,4497,4439,166,0.5032,-34280.51,-0.0377,-3.8
+SPREAD (ATS),conference vs non-conference,non-conference,3523,1743,1731,49,0.5017,-14357.06,-0.0408,-2.55
+SPREAD (ATS),by week,a. weeks 1-2,1436,703,712,21,0.4968,-7184.12,-0.05,-2.0
+SPREAD (ATS),by week,b. weeks 3-5,2547,1277,1226,44,0.5102,-6261.88,-0.0246,-1.31
+SPREAD (ATS),by week,c. weeks 6-10,4823,2387,2350,86,0.5039,-17556.87,-0.0364,-2.67
+SPREAD (ATS),by week,d. week 11+,3685,1807,1815,63,0.4989,-16934.7,-0.046,-2.94
+SPREAD (ATS),by week,e. bowls / playoff,134,66,67,1,0.4962,-700.0,-0.0522,-0.63
+SPREAD (ATS),venue x line size,home dog a. +0.5 to +3,1039,494,510,35,0.492,-5765.4,-0.0555,-1.9
+SPREAD (ATS),venue x line size,home dog b. +3.5 to +7,1350,678,651,21,0.5102,-3401.87,-0.0252,-0.98
+SPREAD (ATS),venue x line size,home dog c. +7.5 to +10,613,289,312,12,0.4809,-4898.35,-0.0799,-2.09
+SPREAD (ATS),venue x line size,home dog d. +10.5 to +14,601,301,294,6,0.5059,-2018.54,-0.0336,-0.87
+SPREAD (ATS),venue x line size,home dog e. +14.5 to +21,607,267,328,12,0.4487,-8506.39,-0.1401,-3.67
+SPREAD (ATS),venue x line size,home dog f. +21.5 to +28,245,110,133,2,0.4527,-3280.73,-0.1339,-2.21
+SPREAD (ATS),venue x line size,home dog g. +28.5 to +35,84,46,37,1,0.5542,482.65,0.0575,0.55
+SPREAD (ATS),venue x line size,home dog h. +35 or more,21,14,7,0,0.6667,572.73,0.2727,1.36
+SPREAD (ATS),venue x line size,neutral site a. +0.5 to +3,96,52,40,4,0.5652,746.79,0.0778,0.82
+SPREAD (ATS),venue x line size,neutral site b. +3.5 to +7,141,85,53,3,0.6159,2441.37,0.1731,2.23
+SPREAD (ATS),venue x line size,neutral site c. +7.5 to +10,65,25,40,0,0.3846,-1723.84,-0.2652,-2.28
+SPREAD (ATS),venue x line size,neutral site d. +10.5 to +14,64,29,35,0,0.4531,-860.29,-0.1344,-1.12
+SPREAD (ATS),venue x line size,neutral site e. +14.5 to +21,49,27,22,0,0.551,260.12,0.0531,0.39
+SPREAD (ATS),venue x line size,neutral site f. +21.5 to +28,23,11,12,0,0.4783,-194.84,-0.0847,-0.42
+SPREAD (ATS),venue x line size,neutral site g. +28.5 to +35,9,5,4,0,0.5556,54.55,0.0606,0.18
+SPREAD (ATS),venue x line size,road dog a. +0.5 to +3,1163,611,526,26,0.5374,3161.76,0.0272,0.98
+SPREAD (ATS),venue x line size,road dog b. +3.5 to +7,1649,810,810,29,0.5,-7199.34,-0.0437,-1.87
+SPREAD (ATS),venue x line size,road dog c. +7.5 to +10,864,437,415,12,0.5129,-1748.22,-0.0202,-0.63
+SPREAD (ATS),venue x line size,road dog d. +10.5 to +14,1108,545,552,11,0.4968,-5592.94,-0.0505,-1.77
+SPREAD (ATS),venue x line size,road dog e. +14.5 to +21,1375,694,664,17,0.511,-3256.33,-0.0237,-0.93
+SPREAD (ATS),venue x line size,road dog f. +21.5 to +28,810,400,399,11,0.5006,-3509.47,-0.0433,-1.3
+SPREAD (ATS),venue x line size,road dog g. +28.5 to +35,398,190,203,5,0.4835,-3014.4,-0.0757,-1.59
+SPREAD (ATS),venue x line size,road dog h. +35 or more,251,120,123,8,0.4938,-1386.58,-0.0552,-0.93
+SPREAD (ATS),rest advantage,a. dog rested 5+ more days,1038,539,486,13,0.5259,503.22,0.0048,0.16
+SPREAD (ATS),rest advantage,b. dog rested 1-4 more days,1814,914,865,35,0.5138,-3255.07,-0.0179,-0.81
+SPREAD (ATS),rest advantage,c. equal rest,6336,3142,3075,119,0.5054,-21276.73,-0.0336,-2.82
+SPREAD (ATS),rest advantage,d. favourite rested 1-4 more,1604,750,829,25,0.475,-14543.59,-0.0907,-3.83
+SPREAD (ATS),rest advantage,e. favourite rested 5+ more,1045,510,519,16,0.4956,-5510.57,-0.0527,-1.8
+SPREAD (ATS),opening -> closing line move,a. dog gave back 1+ pts (bet on dog),2563,1273,1253,37,0.504,-9362.47,-0.0365,-1.95
+SPREAD (ATS),opening -> closing line move,b. dog gave back 0.5 pt,1080,538,526,16,0.5056,-3597.7,-0.0333,-1.15
+SPREAD (ATS),opening -> closing line move,c. line never moved,1121,537,548,36,0.4949,-5823.51,-0.0519,-1.85
+SPREAD (ATS),opening -> closing line move,d. dog gained 0.5 pt,1138,549,570,19,0.4906,-7019.82,-0.0617,-2.2
+SPREAD (ATS),opening -> closing line move,e. dog gained 1+ pts (bet on fav),2926,1455,1427,44,0.5049,-10207.72,-0.0349,-1.99
+FAVOURITE MONEYLINE,"favourite moneyline, by underdog line size",a. +0.5 to +3,2204,1155,1049,0,0.524,-18898.1,-0.0857,-4.6
+FAVOURITE MONEYLINE,"favourite moneyline, by underdog line size",b. +3.5 to +7,2969,1930,1039,0,0.6501,-12864.92,-0.0433,-3.34
+FAVOURITE MONEYLINE,"favourite moneyline, by underdog line size",c. +7.5 to +10,1461,1096,365,0,0.7502,-3868.84,-0.0265,-1.8
+FAVOURITE MONEYLINE,"favourite moneyline, by underdog line size",d. +10.5 to +14,1645,1325,320,0,0.8055,-4363.16,-0.0265,-2.21
+FAVOURITE MONEYLINE,"favourite moneyline, by underdog line size",e. +14.5 to +21,1905,1710,195,0,0.8976,13.05,0.0001,0.01
+FAVOURITE MONEYLINE,"favourite moneyline, by underdog line size",f. +21.5 to +28,1009,957,52,0,0.9485,-1253.98,-0.0124,-1.71
+FAVOURITE MONEYLINE,"favourite moneyline, by underdog line size",g. +28.5 to +35,403,394,9,0,0.9777,-385.33,-0.0096,-1.26
+FAVOURITE MONEYLINE,"favourite moneyline, by underdog line size",h. +35 or more,179,178,1,0,0.9944,191.56,0.0107,1.09

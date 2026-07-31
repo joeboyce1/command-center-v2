@@ -1,0 +1,19 @@
+SBR games matched to our dataset : 2,837
+  no score/date match            : 1,404
+  ambiguous (same date+score)    : 118
+
+favourite side agrees            : 98.87%
+spread identical to the decimal  : 57.56%
+spread within 0.5 pt             : 91.72%
+spread within 1.0 pt             : 96.93%
+mean signed spread difference    : -0.070 pts
+median abs spread difference     : 0.000 pts
+
+underdog moneylines compared     : 2,629
+median abs difference            : 8 cents
+within 20 cents                  : 73.91%
+mean signed difference           : -0.3 cents (positive = our price is more generous)
+
+independent replication from the SBR file alone (2014-2019, moneyline):
+  home dog of +3 or less    380 bets   44.5% won    -1,178   -3.1% ROI
+  road dog of +3 or less    392 bets   47.4% won     1,448    3.7% ROI
