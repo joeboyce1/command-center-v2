@@ -62,6 +62,7 @@ def load(min_books: int = 1, fbs_only: bool = False, max_ml: float | None = None
             row["dog_line"] = num(row["dog_line"])
             row["dog_ml"] = num(row["dog_ml"])
             row["dog_spread_price"] = num(row["dog_spread_price"])
+            row["fav_spread_price"] = num(row["fav_spread_price"])
             row["dog_line_open"] = num(row["dog_line_open"])
             row["dog_rest"] = num(row["dog_rest"])
             row["fav_rest"] = num(row["fav_rest"])

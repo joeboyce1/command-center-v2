@@ -232,7 +232,8 @@ FIELDS = [
     "away_conference", "home_division", "away_division", "home_points",
     "away_points", "spread_home", "n_books_spread", "ml_home", "ml_away",
     "n_books_ml", "dog", "dog_team", "fav_team", "dog_conference",
-    "fav_conference", "dog_line", "dog_line_open", "dog_spread_price", "dog_ml",
+    "fav_conference", "dog_line", "dog_line_open", "dog_spread_price",
+    "fav_spread_price", "dog_ml",
     "fav_ml", "dog_source", "dog_margin", "dog_rest", "fav_rest",
 ]
 
@@ -321,6 +322,7 @@ def main() -> int:
                 "dog_rest": rest.get((game_id, dog), ""),
                 "fav_rest": rest.get((game_id, fav), ""),
                 "dog_spread_price": rec.get(f"spread_price_{dog}"),
+                "fav_spread_price": rec.get(f"spread_price_{fav}"),
                 "dog_ml": rec.get(f"ml_{dog}"),
                 "fav_ml": rec.get(f"ml_{fav}"),
                 "dog_source": source,

@@ -16,6 +16,10 @@ The one cut that made money: **road underdogs of +3 or less on the moneyline**,
 halves of the sample. An independent dataset puts the same edge at +3.7%, so
 call it a few percent rather than eight.
 
+The closest thing to a free bye-week angle: an **underdog off a bye** is the
+only ATS cut in the study that does not lose money (52.5% cover, +0.3% ROI,
+positive in both halves of the sample). A rested *favourite* is worth nothing.
+
 Full write-up with all the segment breakdowns: **[RESULTS.md](RESULTS.md)**
 
 ### Layout
@@ -26,6 +30,7 @@ Full write-up with all the segment breakdowns: **[RESULTS.md](RESULTS.md)**
 | `cfb_underdog_backtest/build_dataset.py` | per-book lines + schedules -> one row per game |
 | `cfb_underdog_backtest/validate_lines.py` | cross-checks the lines against a second source |
 | `cfb_underdog_backtest/backtest.py` | the backtest and the segment tables |
+| `cfb_underdog_backtest/bye_analysis.py` | the bye-week study |
 | `data/processed/games.csv` | 16,599 games with a consensus closing line and result |
 | `results/` | generated reports and the segment table as CSV |
 
@@ -37,6 +42,7 @@ python cfb_underdog_backtest/build_dataset.py
 python cfb_underdog_backtest/validate_lines.py
 python cfb_underdog_backtest/backtest.py                  # FBS vs FBS (default)
 python cfb_underdog_backtest/backtest.py --all-divisions  # include FCS opponents
+python cfb_underdog_backtest/bye_analysis.py
 ```
 
 No third-party dependencies — standard library only. `data/processed/games.csv`

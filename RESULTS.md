@@ -100,7 +100,56 @@ inverted in this sample.
 A dog whose opponent is coming off extra rest covers only 47.5% and loses 9.1%
 — profitable in 2 of 20 seasons. A dog off a bye against a favourite on a
 normal week breaks even, which is as close as any ATS cut gets to beating the
-number. The gradient is monotonic through the middle four buckets.
+number. The gradient is monotonic through the middle four buckets. The bye week
+specifically is broken out in the next section.
+
+### 3b. The bye week: it helps the underdog, and only the underdog
+
+A bye here is 12-16 days since the team's last game. The rest-day distribution
+is cleanly bimodal — 6-9 days for a normal week, 13-15 for a bye — so the
+threshold is not a judgement call. 2,478 of the 12,672 FBS games have at least
+one team off a bye.
+
+| Rest matchup | Bets | Dog covers | Dog ATS ROI | t |
+|---|---|---|---|---|
+| **Dog off a bye, favourite normal** | 975 | **52.5%** | **+0.3%** | 0.10 |
+| Favourite off a bye, dog normal | 976 | 50.2% | -4.0% | -1.33 |
+| Both off a bye | 434 | 48.9% | -6.3% | -1.38 |
+| Neither off a bye | 8,954 | 50.2% | -4.0% | -4.01 |
+
+**An underdog off a bye is the only ATS cut in this entire study that does not
+lose money.** It covers 52.5% against a break-even of 52.4%, and it does it in
+both halves of the sample: +0.1% ROI on 577 bets in 2006-2018, +0.5% on 398
+bets in 2019-2025. That consistency is the point — it is not a big edge, it is
+a reliable *absence* of the usual 4-point drag.
+
+Everything else about the bye is worthless or worse:
+
+- **A rested favourite gets no bump.** Dogs facing one still cover 50.2% and
+  still lose 4.0% — identical to the no-bye baseline. Laying those favourites
+  loses 4.8%.
+- **Backing whoever is off the bye, regardless of side**, loses 2.2% over 1,951
+  bets (t=-1.04), profitable in 9 of 20 seasons. The whole benefit sits in the
+  underdog half; averaging it with the favourite half destroys it.
+- **On the moneyline, a rested favourite is a bad lay**: -6.6% over 923 bets
+  (t=-3.22), the worst bye-related number in the study.
+- **Both teams off a bye** is the worst rest matchup for a dog (-6.3%), though
+  434 bets is thin.
+
+Note this does *not* reproduce the rest finding from the previous section. The
+-9.1% cut there was favourites with **1-4 extra days** — a Thursday-to-Saturday
+edge, not a bye. A full bye for the favourite is worth roughly nothing; small
+scheduling edges are what the number misses.
+
+Inside the underdog-off-a-bye cell, nothing subdivides cleanly. Road (+1.4%)
+beats home (-1.6%), conference games (+2.2%) beat non-conference (-6.9%), P5
+and G5 are identical, and the line-size split runs +12.6%, -15.4%, +7.3%, 0.0%
+across four ~200-bet buckets. A sign pattern that alternates like that is
+noise, not structure. The honest statement is the top-level one: the bye is
+worth about four points of ROI to an underdog, and it stops there.
+
+Long layoffs of 17+ days (bowls, season restarts) are excluded from all of the
+above; underdogs off one went 51.9% for -0.8% on 156 bets.
 
 ### 4. Conference is mostly noise — except for who the favourite is
 
@@ -203,6 +252,8 @@ python cfb_underdog_backtest/validate_lines.py   # cross-check vs SBR
 python cfb_underdog_backtest/backtest.py         # -> results/
 ```
 
+Plus `python cfb_underdog_backtest/bye_analysis.py` for the bye-week section.
+
 Outputs in `results/`: `report_fbs.txt` (the full FBS-vs-FBS report used
-above), `report_all_divisions.txt` (including FCS opponents),
+above), `report_all_divisions.txt` (including FCS opponents), `report_bye.txt`,
 `segments.csv` (every segment as data), `validation.txt`.
