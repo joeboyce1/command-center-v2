@@ -152,6 +152,24 @@ VERDICT SUPPRESSED.
 `--no-strict` overrides it and exists only for exploration. Reaching for it is
 the tell that the sample is too small.
 
+## Getting the earnings dates
+
+```bash
+python fetch_events.py NVDA AMD MU DELL --out data/universe_earnings.csv
+```
+
+Needs network access and `yfinance`. **Timing is derived from the announcement
+timestamp, not taken from a vendor label** — after 16:00 ET is `amc`, before
+09:30 is `bmo`. Anything landing inside the regular session, or at a midnight
+placeholder, is refused rather than guessed and reported for you to fill in by
+hand. Guessing there would misalign the event by a full session, which is the
+error that inverted CRWV's largest event.
+
+Yahoo's earnings history is shallow, often only a couple of years. For a longer
+backtest use Financial Modeling Prep's earnings endpoint, which carries an
+explicit `bmo`/`amc` field, or SEC EDGAR 8-K Item 2.02 filings, whose acceptance
+timestamp gives the same information for free.
+
 ## Defining a "big move" without options data
 
 Historical implied moves are the expensive input, so there are three
@@ -241,6 +259,7 @@ before the signal fires. 1.0 means any break; 1.3 means 30% beyond.
 ## Layout
 
 ```
+fetch_events.py      builds an events CSV, inferring AMC/BMO from the timestamp
 pead/data.py         price/event loading, caching, surprise calculations
 pead/eventstudy.py   event alignment, market model, CAR windows, signals
 run_backtest.py      CLI
@@ -249,7 +268,7 @@ data/crwv_observed_reactions.csv  reactions vs implied, with per-row confidence
 tests/               synthetic checks on alignment, CAR math and signal firing
 ```
 
-`pytest tests/ -q` — 12 tests covering AMC/BMO alignment, exclusion of the
+`pytest tests/ -q` — 44 tests covering AMC/BMO alignment, exclusion of the
 announcement day from the drift window, recovery of a known injected drift, beta
 estimation and benchmark netting, the excess-move threshold and its use of raw
 rather than abnormal returns, and the negative-EPS sign convention.
