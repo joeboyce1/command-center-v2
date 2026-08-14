@@ -33,7 +33,7 @@ post-earnings move over the last four quarters is about 16.8% against implied
 moves that have run 9.8–15.5%. So on this name the "blew past implied" condition
 is close to always-true, and the strategy collapses into plain
 trade-the-reaction. If you want the filter to select rather than pass
-everything, the threshold has to go higher — `--implied-threshold 1.3` cuts the
+everything, the threshold has to go higher — `--signal excess_move --threshold 1.3` cuts the
 sample to Q1 FY2025, Q2 FY2025 and Q3 FY2025, which happen to be three of the
 four confirmations. That is also the kind of after-the-fact threshold choice
 that manufactures backtest results, so treat it as a hypothesis, not a finding.
@@ -232,7 +232,7 @@ multiple, and cumulative abnormal drift at +1/+5/+10/+21/+42/+63 sessions, then
 signed-drift summaries for four signal definitions: excess-move (yours),
 reaction sign, revenue surprise and EPS surprise.
 
-`--implied-threshold` sets how far past the implied move the reaction must go
+`--threshold` sets how far past the bar the reaction must go
 before the signal fires. 1.0 means any break; 1.3 means 30% beyond.
 
 ## Method
