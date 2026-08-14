@@ -19,6 +19,13 @@ import pandas as pd
 
 from pead.data import DataUnavailable, load_events, load_prices
 from pead.eventstudy import run_event_study, summarize
+from pead.validate import (
+    check_events,
+    check_power,
+    check_prices,
+    effective_sample_size,
+    report,
+)
 
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 HORIZONS = (1, 3, 5, 10, 21, 42, 63)
@@ -39,6 +46,19 @@ def parse_args() -> argparse.Namespace:
         help="the excess-move signal fires when |reaction| exceeds this multiple "
         "of the options-implied move (1.0 = any break of the implied move)",
     )
+    parser.add_argument(
+        "--no-strict",
+        action="store_true",
+        help="print aggregate results even when the data-quality gates fail "
+        "(for exploration only - the gates exist because a plausible-looking "
+        "aggregate is the failure mode)",
+    )
+    parser.add_argument(
+        "--signal",
+        default="excess_move",
+        choices=("excess_move", "reaction", "revenue", "eps"),
+        help="which signal the verdict is gated on",
+    )
     return parser.parse_args()
 
 
@@ -55,10 +75,28 @@ def main() -> int:
         print(f"Price data unavailable: {exc}\n", file=sys.stderr)
         return report_qualitative(events)
 
+    findings = check_prices(args.ticker, prices) + check_prices(args.benchmark, benchmark)
+    findings += check_events(events, prices, max(HORIZONS))
+
     results = run_event_study(events, prices, benchmark, HORIZONS)
     if not results:
         print("No events fell inside the price series.", file=sys.stderr)
         return 1
+
+    # Power is judged on the horizon the thesis is about (~60 calendar days),
+    # using a clustering-adjusted sample size.
+    verdict_horizon = 42
+    signed = [
+        r.signal(args.signal, args.implied_threshold) * r.drift[verdict_horizon]
+        for r in results
+        if r.signal(args.signal, args.implied_threshold)
+        and verdict_horizon in r.drift
+    ]
+    n_eff = effective_sample_size([r.event_day for r in results])
+    findings += check_power(signed, f"{args.signal} @ +{verdict_horizon}d", n_eff)
+
+    can_conclude = report(findings, strict=not args.no_strict)
+    print()
 
     print("Per-event announcement reaction and drift (abnormal, vs "
           f"{args.benchmark})\n")
@@ -82,6 +120,9 @@ def main() -> int:
         ]
     )
     print(per_event.to_string(index=False))
+
+    if not can_conclude:
+        return 2
 
     for mode, label in (
         (

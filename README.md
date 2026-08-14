@@ -120,6 +120,38 @@ smaller caps, thin analyst coverage, high idiosyncratic volatility, and the
 announcement-return-conditioned version rather than the SUE version. Drift has
 decayed materially in large caps since the 2000s.
 
+## Stress-testing other tickers
+
+`prompts/pead_stress_test.md` holds a fill-in-the-blank prompt for running this
+against a new universe. Its rules are mostly prohibitions, because the realistic
+failure mode is not bad reasoning about drift — it is a confident table of
+half-remembered numbers. The CRWV study in this repo hit exactly that: an
+after-hours quote of -5% stood in for a session close of +21.1% and inverted the
+sign of the largest event in the sample.
+
+So reliability is enforced in code rather than in wording. `pead/validate.py`
+runs before any aggregate prints and blocks the verdict on price integrity
+(duplicate or unsorted dates, non-positive closes, suspicious gaps, stale
+repeated closes), event integrity (dates outside the series, bad AMC/BMO timing,
+implied moves outside 1–60%, too little post-event history), and — the one that
+matters — **statistical power**. That check computes the smallest effect the
+sample could tell from zero, using a clustering-adjusted sample size, and fails
+when it exceeds 5% per event.
+
+The effect of that gate is that a single-ticker run cannot return a reassuring
+answer. Twelve quarterly events at 20% dispersion detect only an 11.7% effect,
+so the harness prints the per-event table and refuses the aggregate:
+
+```
+[FAIL] power (excess_move @ +42d): n=12, per-event sd 20.3%, smallest
+detectable effect 11.7% - above the 5% ceiling for a real PEAD effect
+
+VERDICT SUPPRESSED.
+```
+
+`--no-strict` overrides it and exists only for exploration. Reaching for it is
+the tell that the sample is too small.
+
 ## Running it
 
 ```bash
