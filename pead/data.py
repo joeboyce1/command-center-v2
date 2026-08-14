@@ -39,8 +39,7 @@ def load_prices(ticker: str, start: str, end: str, allow_download: bool = True) 
     """
     cached = _cache_path(ticker)
     if os.path.exists(cached):
-        frame = pd.read_csv(cached, parse_dates=["date"]).set_index("date")
-        series = frame["close"].astype(float)
+        series = read_price_csv(cached)
         window = series.loc[start:end]
         if not window.empty:
             return window
@@ -54,6 +53,43 @@ def load_prices(ticker: str, start: str, end: str, allow_download: bool = True) 
     os.makedirs(PRICE_CACHE, exist_ok=True)
     series.rename("close").rename_axis("date").to_frame().to_csv(cached)
     return series
+
+
+def read_price_csv(path: str) -> pd.Series:
+    """Read a daily close series from CSV, accepting a Yahoo Finance download.
+
+    Yahoo's export is ``Date,Open,High,Low,Close,Adj Close,Volume``. ``Adj
+    Close`` is preferred whenever it is present, because raw ``Close`` is not
+    split-adjusted and a split inside the sample would otherwise register as a
+    50% overnight crash - which this study would happily read as an earnings
+    reaction. A plain ``date,close`` file works too.
+    """
+    frame = pd.read_csv(path)
+    lookup = {str(c).strip().lower(): c for c in frame.columns}
+
+    date_col = next((lookup[k] for k in ("date", "datetime", "timestamp") if k in lookup), None)
+    if date_col is None:
+        raise DataUnavailable(f"{path}: no date column found in {list(frame.columns)}")
+
+    for key in ("adj close", "adj_close", "adjclose", "close", "close/last"):
+        if key in lookup:
+            close_col = lookup[key]
+            break
+    else:
+        raise DataUnavailable(f"{path}: no close column found in {list(frame.columns)}")
+
+    out = frame[[date_col, close_col]].copy()
+    out.columns = ["date", "close"]
+    out["date"] = pd.to_datetime(out["date"], errors="coerce", utc=True).dt.tz_localize(None)
+    # Some exports wrap prices in currency symbols or thousands separators.
+    out["close"] = pd.to_numeric(
+        out["close"].astype(str).str.replace(r"[$,]", "", regex=True), errors="coerce"
+    )
+    out = out.dropna().drop_duplicates(subset="date").sort_values("date")
+    if out.empty:
+        raise DataUnavailable(f"{path}: no usable rows after parsing")
+
+    return out.set_index("date")["close"].astype(float)
 
 
 def _download(ticker: str, start: str, end: str) -> pd.Series:

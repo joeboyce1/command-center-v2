@@ -137,9 +137,9 @@ def test_excess_move_threshold_is_configurable():
     # asserting behaviour exactly at the threshold would be testing float
     # representation rather than the signal.
     assert result.implied_multiple == pytest.approx(1.2, abs=1e-6)
-    assert result.signal("excess_move", implied_threshold=1.0) == 1
-    assert result.signal("excess_move", implied_threshold=1.15) == 1
-    assert result.signal("excess_move", implied_threshold=1.5) == 0
+    assert result.signal("excess_move", threshold=1.0) == 1
+    assert result.signal("excess_move", threshold=1.15) == 1
+    assert result.signal("excess_move", threshold=1.5) == 0
 
 
 def test_excess_move_uses_the_raw_move_not_the_abnormal_one():

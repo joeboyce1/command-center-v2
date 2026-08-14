@@ -152,18 +152,62 @@ VERDICT SUPPRESSED.
 `--no-strict` overrides it and exists only for exploration. Reaching for it is
 the tell that the sample is too small.
 
+## Defining a "big move" without options data
+
+Historical implied moves are the expensive input, so there are three
+options-free stand-ins. All of them use the raw announcement move, and all are
+computed from data strictly before the event.
+
+| `--signal` | Fires when | Default | Needs |
+|---|---|---|---|
+| `excess_move` | move > N x the options-implied move | 1.0 | implied moves |
+| `sigma_move` | move > N standard deviations of the stock's own daily vol | 3.0 | ~70 prior sessions |
+| `earnings_vol_move` | move > N x the stock's average past earnings move | 1.0 | 3 prior events |
+| `abs_move` | move > a fixed percentage | 0.10 | nothing |
+
+**`sigma_move` is the default, and a fixed percentage is the one to avoid.** A
+10% move is extraordinary for a utility and a normal Tuesday for a high-beta AI
+name, so a single percentage threshold applied across a universe is not a
+neutral filter — it is a volatility screen in disguise. It will select almost
+entirely high-volatility names, and those are exactly the names with the widest
+drift dispersion, so the sample you end up measuring is the one where the
+signal is hardest to detect. `test_fixed_percentage_selects_on_volatility_but_sigma_does_not`
+demonstrates this: an identical 10% move fires `abs_move` for both a calm and a
+wild stock, while `sigma_move` correctly separates them.
+
+`earnings_vol_move` is the closest free proxy for the straddle, since options
+are priced largely off what a stock usually does on earnings day. Its cost is a
+burn-in: the first three events per ticker have no prior moves to average and
+are skipped. It also has to be computed forward in time — the expected move for
+event *k* averages only events before *k*. Averaging the whole sample would let
+a future move set the threshold that selects a past one, which flatters the
+backtest and cannot be traded.
+
 ## Running it
 
 ```bash
-pip install pandas numpy yfinance
-python run_backtest.py --ticker CRWV --benchmark QQQ --implied-threshold 1.0
+pip install pandas numpy
+python run_backtest.py --ticker NVDA --benchmark QQQ \
+  --events data/nvda_earnings.csv --signal sigma_move --threshold 3.0 --offline
 ```
 
-With network access the script pulls daily bars via `yfinance` and caches them
-under `data/prices/`. Without it, drop a CSV with `date,close` columns at
-`data/prices/CRWV.csv` (and one for the benchmark) and re-run — that path needs
-no network. If no price series is available it prints the event table and the
-reported reactions instead of failing, which is what it does in this repo today.
+**Yahoo Finance CSV downloads work unmodified.** Save the export to
+`data/prices/<TICKER>.csv` (and one for the benchmark) and pass `--offline`; no
+network or API key is needed. The loader takes Yahoo's
+`Date,Open,High,Low,Close,Adj Close,Volume` layout, a plain `date,close` file,
+or a Nasdaq-style export with `$` and thousands separators.
+
+It reads **Adj Close** in preference to `Close` whenever both are present, which
+matters more than it sounds: raw `Close` is not split-adjusted, so a split
+inside your sample shows up as a ~50% overnight crash that this study would
+happily record as an earnings reaction.
+
+The events file needs `ticker,fiscal_quarter,announce_date,timing`, where
+`timing` is `amc` or `bmo`. `implied_move_pct` is optional and only required for
+`--signal excess_move`.
+
+With network access and `yfinance` installed, dropping `--offline` pulls and
+caches the bars automatically.
 
 Output is a per-event table of raw and abnormal announcement moves, the implied
 multiple, and cumulative abnormal drift at +1/+5/+10/+21/+42/+63 sessions, then

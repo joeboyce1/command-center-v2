@@ -8,24 +8,27 @@ Read the two notes after it before trusting anything it produces.
 ---
 
 ```text
-Stress-test the excess-move PEAD thesis using the harness in this repo.
+Stress-test the big-move PEAD thesis using the harness in this repo.
 
 TICKER(S):        <e.g. NVDA, AMD, SMCI, MU, DELL>
 BENCHMARK:        <e.g. QQQ>
 PERIOD:           <e.g. 2019-01-01 to today>
-IMPLIED-MOVE DATA: <path to CSV, or "none available">
+PRICE CSVs:       <paths, e.g. data/prices/*.csv from Yahoo Finance downloads>
 
 THESIS (fixed before you look at any result — do not modify it):
-  When the first full regular session after an earnings release closes past the
-  options-implied move, the stock continues drifting in that direction over the
-  following 30-60 days.
+  When the first full regular session after an earnings release closes with a
+  move far larger than that stock normally makes, the stock continues drifting
+  in that direction over the following 30-60 days. "Far larger" is defined by
+  the signal below, not by a percentage picked per name.
 
 PRE-REGISTERED PARAMETERS (fix these now; changing them after seeing results
 invalidates the test):
   - Primary horizon: 42 trading sessions (~60 calendar days)
   - Secondary horizon: 21 trading sessions (~30 calendar days)
-  - Implied-move threshold: 1.0x
-  - Signal: excess_move
+  - Signal and threshold: sigma_move at 3.0 standard deviations
+    (use excess_move at 1.0x only if you have real implied-move data; do not
+     use abs_move across multiple tickers - a fixed percentage silently
+     selects high-volatility names)
   - Benchmark adjustment: market model, estimation window t-140 to t-11
 
 RULES — these are the point of the exercise, not boilerplate:
@@ -58,8 +61,8 @@ RULES — these are the point of the exercise, not boilerplate:
 
 REQUIRED OUTPUT:
   a. The data-quality report, unedited.
-  b. Per-event table: event day, raw and abnormal reaction, implied move,
-     multiple, CAR at +21d and +42d.
+  b. Per-event table: event day, raw and abnormal reaction, the multiple that
+     fired the signal (sigma / x-implied / x-earnings-vol), CAR at +21d and +42d.
   c. Contradicting events and worst-case single-event loss.
   d. Aggregate signed drift with a date-clustered t-stat — or an explicit
      statement that the sample cannot support one.

@@ -18,7 +18,7 @@ import sys
 import pandas as pd
 
 from pead.data import DataUnavailable, load_events, load_prices
-from pead.eventstudy import run_event_study, summarize
+from pead.eventstudy import DEFAULT_THRESHOLDS, run_event_study, summarize
 from pead.validate import (
     check_events,
     check_power,
@@ -40,11 +40,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--end", default=None, help="defaults to today")
     parser.add_argument("--offline", action="store_true", help="never hit the network")
     parser.add_argument(
-        "--implied-threshold",
+        "--threshold",
         type=float,
-        default=1.0,
-        help="the excess-move signal fires when |reaction| exceeds this multiple "
-        "of the options-implied move (1.0 = any break of the implied move)",
+        default=None,
+        help="how big the reaction must be for the signal to fire. Units depend "
+        "on --signal: multiples of the implied move (excess_move, default 1.0), "
+        "multiples of the stock's average past earnings move (earnings_vol_move, "
+        "default 1.0), standard deviations (sigma_move, default 3.0), or a raw "
+        "decimal fraction (abs_move, default 0.10 = 10%%)",
     )
     parser.add_argument(
         "--no-strict",
@@ -55,9 +58,18 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--signal",
-        default="excess_move",
-        choices=("excess_move", "reaction", "revenue", "eps"),
-        help="which signal the verdict is gated on",
+        default="sigma_move",
+        choices=(
+            "excess_move",
+            "sigma_move",
+            "earnings_vol_move",
+            "abs_move",
+            "reaction",
+            "revenue",
+            "eps",
+        ),
+        help="which signal the verdict is gated on. sigma_move is the default "
+        "because it needs no options data and stays comparable across tickers",
     )
     return parser.parse_args()
 
@@ -87,9 +99,9 @@ def main() -> int:
     # using a clustering-adjusted sample size.
     verdict_horizon = 42
     signed = [
-        r.signal(args.signal, args.implied_threshold) * r.drift[verdict_horizon]
+        r.signal(args.signal, args.threshold) * r.drift[verdict_horizon]
         for r in results
-        if r.signal(args.signal, args.implied_threshold)
+        if r.signal(args.signal, args.threshold)
         and verdict_horizon in r.drift
     ]
     n_eff = effective_sample_size([r.event_day for r in results])
@@ -114,6 +126,14 @@ def main() -> int:
                 "x_implied": (
                     f"{r.implied_multiple:.2f}x" if r.implied_multiple is not None else "n/a"
                 ),
+                "sigma": (
+                    f"{r.sigma_multiple:.1f}sd" if r.sigma_multiple is not None else "n/a"
+                ),
+                "x_earn_vol": (
+                    f"{r.earnings_vol_multiple:.2f}x"
+                    if r.earnings_vol_multiple is not None
+                    else "n/a"
+                ),
                 **{f"car_+{h}d": f"{r.drift[h]:+.2%}" for h in HORIZONS if h in r.drift},
             }
             for r in results
@@ -125,19 +145,23 @@ def main() -> int:
         return 2
 
     for mode, label in (
-        (
-            "excess_move",
-            f"Signal = reaction broke {args.implied_threshold:.2f}x the implied "
-            "move; trade in that direction",
-        ),
+        ("excess_move", "Signal = reaction broke the options-implied move"),
+        ("sigma_move", "Signal = reaction in SDs of the stock's own daily vol"),
+        ("earnings_vol_move", "Signal = reaction vs the stock's average past earnings move"),
+        ("abs_move", "Signal = reaction past a fixed percentage"),
         ("reaction", "Signal = sign of the announcement-day move (earnings momentum)"),
         ("revenue", "Signal = sign of the revenue surprise"),
         ("eps", "Signal = sign of the EPS surprise"),
     ):
-        table = summarize(results, mode, HORIZONS, args.implied_threshold)
+        # --threshold is expressed in the selected signal's units, so it must
+        # not leak into the others: 3.0 means 3 sigma, but 300% to abs_move.
+        threshold = args.threshold if mode == args.signal else None
+        table = summarize(results, mode, HORIZONS, threshold)
         if table.empty:
             continue
-        print(f"\n{label}")
+        used = threshold if threshold is not None else DEFAULT_THRESHOLDS.get(mode)
+        suffix = f"  [fires at {used:g}]" if used is not None else ""
+        print(f"\n{label}{suffix}")
         formatted = table.assign(
             mean_signed_car=lambda d: d.mean_signed_car.map("{:+.2%}".format),
             median_signed_car=lambda d: d.median_signed_car.map("{:+.2%}".format),

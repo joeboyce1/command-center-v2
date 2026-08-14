@@ -112,10 +112,21 @@ def check_events(
             )
 
         implied = event.implied_move_pct
-        if implied is None:
-            out.append(Finding(WARN, tag, "no implied move; the excess-move signal cannot be evaluated"))
-        elif not 0.01 <= implied <= 0.60:
+        if implied is not None and not 0.01 <= implied <= 0.60:
             out.append(Finding(FAIL, tag, f"implied move of {implied:.1%} is outside a believable range"))
+
+    # Aggregated rather than per-event: with a real universe this would other-
+    # wise bury the genuine failures under hundreds of identical lines.
+    missing = [e for e in events if e.implied_move_pct is None]
+    if missing:
+        out.append(
+            Finding(
+                WARN,
+                "implied moves",
+                f"{len(missing)}/{len(events)} events have none; the excess_move "
+                "signal is unavailable. Use --signal sigma_move or abs_move",
+            )
+        )
 
     dates = [e.announce_date for e in events]
     if len(set(dates)) != len(dates):

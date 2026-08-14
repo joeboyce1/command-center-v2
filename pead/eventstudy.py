@@ -28,6 +28,24 @@ from .data import EarningsEvent
 EST_START, EST_END = -140, -11
 MIN_EST_OBS = 40
 
+# Trailing realized-volatility window for the sigma-move signal. It also ends
+# at t-11 so the pre-earnings vol run-up does not inflate the denominator.
+VOL_WINDOW = 60
+MIN_VOL_OBS = 20
+
+# The earnings-vol signal proxies the straddle with the stock's own average
+# absolute past earnings move, so it needs a burn-in of prior events.
+MIN_PRIOR_EVENTS = 3
+
+# Default firing thresholds, per signal. The units differ: multiples of the
+# implied/expected move, standard deviations, or a raw percentage.
+DEFAULT_THRESHOLDS = {
+    "excess_move": 1.0,
+    "earnings_vol_move": 1.0,
+    "sigma_move": 3.0,
+    "abs_move": 0.10,
+}
+
 
 @dataclass
 class EventResult:
@@ -38,6 +56,8 @@ class EventResult:
     beta_source: str
     announcement_ar: float
     announcement_raw: float = 0.0
+    trailing_vol: float | None = None
+    expected_move_proxy: float | None = None
     drift: dict[int, float] = field(default_factory=dict)
     raw_drift: dict[int, float] = field(default_factory=dict)
 
@@ -53,17 +73,49 @@ class EventResult:
             return None
         return abs(self.announcement_raw) / implied
 
-    def signal(self, mode: str, implied_threshold: float = 1.0) -> float | None:
+    @property
+    def sigma_multiple(self) -> float | None:
+        """The reaction in standard deviations of the stock's own daily moves.
+
+        This is the closest free stand-in for the implied-move filter. It asks
+        the same question - was this move surprising? - but scales by the
+        stock's own volatility, so the bar is comparable across names.
+        """
+        if not self.trailing_vol:
+            return None
+        return abs(self.announcement_raw) / self.trailing_vol
+
+    @property
+    def earnings_vol_multiple(self) -> float | None:
+        """The reaction against the stock's own average past earnings move.
+
+        A straddle is priced largely off what this stock usually does on
+        earnings day, so this tracks the implied move more closely than
+        trailing daily vol does - at the cost of a burn-in period.
+        """
+        if not self.expected_move_proxy:
+            return None
+        return abs(self.announcement_raw) / self.expected_move_proxy
+
+    def signal(self, mode: str, threshold: float | None = None) -> float | None:
         """Direction the PEAD trade would take, per signal definition.
 
         Returns 0 when a signal is defined but does not fire (no trade), and
         None when it cannot be evaluated for lack of data.
         """
-        if mode == "excess_move":
-            multiple = self.implied_multiple
+        if threshold is None:
+            threshold = DEFAULT_THRESHOLDS.get(mode, 1.0)
+
+        multiple = {
+            "excess_move": self.implied_multiple,
+            "sigma_move": self.sigma_multiple,
+            "earnings_vol_move": self.earnings_vol_multiple,
+            "abs_move": abs(self.announcement_raw),
+        }.get(mode)
+        if mode in ("excess_move", "sigma_move", "earnings_vol_move", "abs_move"):
             if multiple is None:
                 return None
-            if multiple < implied_threshold:
+            if multiple < threshold:
                 return 0.0
             return np.sign(self.announcement_raw)
         if mode == "reaction":
@@ -134,7 +186,11 @@ def run_event_study(
     sessions = aligned.index
 
     results: list[EventResult] = []
-    for event in events:
+    # Chronological order matters: the earnings-vol proxy may only see events
+    # that had already happened, or the signal leaks the future into itself.
+    prior_moves: dict[str, list[float]] = {}
+
+    for event in sorted(events, key=lambda e: e.announce_date):
         try:
             day = _event_day(event.announce_date, event.timing, sessions)
         except ValueError:
@@ -144,6 +200,25 @@ def run_event_study(
         beta, alpha, source = _market_model(stock_ret, market_ret, idx)
         abnormal = stock_ret - (alpha + beta * market_ret)
 
+        # Trailing realized vol, ending well before the event so the
+        # pre-earnings volatility run-up does not inflate the denominator.
+        # vol_hi must be checked for positivity before slicing: for an event
+        # near the start of the series it goes negative, and a negative stop
+        # in .iloc counts back from the end, quietly building the window out
+        # of post-event data.
+        vol_hi = idx + EST_END
+        vol_lo = max(0, vol_hi - VOL_WINDOW)
+        trailing_vol = None
+        if vol_hi > vol_lo:
+            vol_window = stock_ret.iloc[vol_lo:vol_hi].dropna()
+            if len(vol_window) >= MIN_VOL_OBS:
+                trailing_vol = float(vol_window.std(ddof=1))
+
+        seen = prior_moves.setdefault(event.ticker, [])
+        expected_proxy = (
+            float(np.mean(np.abs(seen))) if len(seen) >= MIN_PRIOR_EVENTS else None
+        )
+
         result = EventResult(
             event=event,
             event_day=day,
@@ -152,7 +227,10 @@ def run_event_study(
             beta_source=source,
             announcement_ar=float(abnormal.iloc[idx]),
             announcement_raw=float(stock_ret.iloc[idx]),
+            trailing_vol=trailing_vol,
+            expected_move_proxy=expected_proxy,
         )
+        seen.append(result.announcement_raw)
 
         # Drift starts the session *after* the announcement is priced.
         for horizon in horizons:
@@ -173,7 +251,7 @@ def summarize(
     results: list[EventResult],
     signal_mode: str,
     horizons: tuple[int, ...],
-    implied_threshold: float = 1.0,
+    threshold: float | None = None,
 ) -> pd.DataFrame:
     """Aggregate signed drift across events for one signal definition.
 
@@ -185,7 +263,7 @@ def summarize(
     for horizon in horizons:
         signed, hit = [], []
         for result in results:
-            direction = result.signal(signal_mode, implied_threshold)
+            direction = result.signal(signal_mode, threshold)
             if direction is None or horizon not in result.drift or direction == 0:
                 continue
             value = direction * result.drift[horizon]
