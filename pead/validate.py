@@ -115,26 +115,34 @@ def check_events(
         if implied is not None and not 0.01 <= implied <= 0.60:
             out.append(Finding(FAIL, tag, f"implied move of {implied:.1%} is outside a believable range"))
 
-    # Aggregated rather than per-event: with a real universe this would other-
-    # wise bury the genuine failures under hundreds of identical lines.
-    missing = [e for e in events if e.implied_move_pct is None]
-    if missing:
-        out.append(
-            Finding(
-                WARN,
-                "implied moves",
-                f"{len(missing)}/{len(events)} events have none; the excess_move "
-                "signal is unavailable. Use --signal sigma_move or abs_move",
-            )
-        )
-
     dates = [e.announce_date for e in events]
+    label = f"{events[0].ticker} events"
     if len(set(dates)) != len(dates):
-        out.append(Finding(FAIL, "events", "duplicate announcement dates"))
+        out.append(Finding(FAIL, label, "duplicate announcement dates"))
 
     if not any(f.level == FAIL for f in out):
-        out.append(Finding(PASS, "events", f"{len(events)} events aligned to the price series"))
+        out.append(Finding(PASS, label, f"{len(events)} events aligned to the price series"))
     return out
+
+
+def check_implied_coverage(events: list[EarningsEvent]) -> list[Finding]:
+    """Report missing implied moves once for the whole run, not once per ticker.
+
+    Called on the full event list rather than inside the per-ticker checks, so
+    the count is the true one and a universe run does not print the same
+    warning once per name.
+    """
+    missing = [e for e in events if e.implied_move_pct is None]
+    if not missing:
+        return [Finding(PASS, "implied moves", f"present for all {len(events)} events")]
+    return [
+        Finding(
+            WARN,
+            "implied moves",
+            f"{len(missing)}/{len(events)} events have none; the excess_move "
+            "signal is unavailable. Use --signal sigma_move or abs_move",
+        )
+    ]
 
 
 def min_detectable_effect(dispersion: float, n: int, target_t: float = TARGET_T) -> float:
@@ -194,18 +202,23 @@ def effective_sample_size(event_days: list[pd.Timestamp], intra_cluster_corr: fl
     return len(event_days) / design_effect
 
 
-def report(findings: list[Finding], strict: bool = True) -> bool:
+def report(findings: list[Finding], strict: bool = True, max_passes: int = 6) -> bool:
     """Print findings. Returns True when it is safe to report a verdict."""
     fails = [f for f in findings if f.level == FAIL]
     warns = [f for f in findings if f.level == WARN]
+    passes = [f for f in findings if f.level == PASS]
 
     print("Data quality\n")
-    for finding in findings:
-        if finding.level != PASS:
-            print(f"  {finding}")
-    passes = [f for f in findings if f.level == PASS]
-    for finding in passes:
+    for finding in fails + warns:
         print(f"  {finding}")
+
+    # Passing checks are per-ticker and uninteresting individually; at universe
+    # scale printing them all buries the failures they exist to surface.
+    if len(passes) > max_passes:
+        print(f"  [PASS] {len(passes)} other checks clean (prices, events, alignment)")
+    else:
+        for finding in passes:
+            print(f"  {finding}")
 
     print(f"\n  {len(passes)} passed, {len(warns)} warnings, {len(fails)} failures")
 

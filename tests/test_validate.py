@@ -13,9 +13,11 @@ import pytest
 from pead.data import EarningsEvent
 from pead.validate import (
     FAIL,
+    Finding,
     PASS,
     WARN,
     check_events,
+    check_implied_coverage,
     check_power,
     check_prices,
     effective_sample_size,
@@ -82,9 +84,40 @@ def test_bad_timing_and_absurd_implied_move_fail():
 def test_missing_implied_move_warns_but_does_not_fail():
     prices = clean_prices()
     event = EarningsEvent("X", "Q1", prices.index[50], "amc")
-    findings = check_events([event], prices, 42)
+    # Per-ticker checks stay quiet about it; coverage is reported run-wide.
+    assert levels(check_events([event], prices, 42), FAIL) == []
+
+    findings = check_implied_coverage([event])
     assert levels(findings, WARN)
     assert levels(findings, FAIL) == []
+
+
+def test_implied_coverage_counts_the_whole_run_once():
+    """One aggregated line, with the true total, not one warning per ticker."""
+    day = clean_prices().index[50]
+    events = [
+        EarningsEvent("A", "Q1", day, "amc", implied_move_pct=0.1),
+        EarningsEvent("B", "Q1", day, "amc"),
+        EarningsEvent("C", "Q1", day, "amc"),
+    ]
+    findings = check_implied_coverage(events)
+    assert len(findings) == 1
+    assert "2/3" in findings[0].detail
+
+    covered = [EarningsEvent("A", "Q1", day, "amc", implied_move_pct=0.1)]
+    assert levels(check_implied_coverage(covered), PASS)
+
+
+def test_report_collapses_passing_checks_at_universe_scale(capsys):
+    """Twenty clean tickers must not bury the one real failure."""
+    findings = [Finding(PASS, f"T{i} prices", "clean") for i in range(20)]
+    findings.append(Finding(FAIL, "power", "cannot detect"))
+
+    report(findings, strict=True)
+    out = capsys.readouterr().out
+    assert "20 other checks clean" in out
+    assert "cannot detect" in out
+    assert "T5 prices" not in out
 
 
 def test_event_too_close_to_the_end_warns():

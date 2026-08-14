@@ -205,9 +205,22 @@ backtest and cannot be traded.
 
 ```bash
 pip install pandas numpy
-python run_backtest.py --ticker NVDA --benchmark QQQ \
-  --events data/nvda_earnings.csv --signal sigma_move --threshold 3.0 --offline
+python fetch_events.py NVDA AMD MU DELL SMCI --out data/universe.csv
+python run_backtest.py --events data/universe.csv --benchmark QQQ --signal sigma_move
 ```
+
+**Run a universe, not one ticker at a time.** The events file is the source of
+truth: every ticker in it is included, so adding a name means adding its rows,
+not remembering another flag. `--tickers` narrows the run if you need it. A
+missing price series skips that ticker and reports it rather than aborting the
+run.
+
+Pooling is not a convenience, it is the point — it is the only way the power
+gate ever opens, and it is also what makes the clustering penalty bite, since
+names report in the same crowded weeks. A per-ticker coverage table prints
+before the aggregate so you can see whether one name is supplying most of the
+firing events; if it is, the pooled result is that name's result wearing a
+universe costume.
 
 **Yahoo Finance CSV downloads work unmodified.** Save the export to
 `data/prices/<TICKER>.csv` (and one for the benchmark) and pass `--offline`; no

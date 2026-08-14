@@ -21,6 +21,7 @@ from pead.data import DataUnavailable, load_events, load_prices
 from pead.eventstudy import DEFAULT_THRESHOLDS, run_event_study, summarize
 from pead.validate import (
     check_events,
+    check_implied_coverage,
     check_power,
     check_prices,
     effective_sample_size,
@@ -33,7 +34,13 @@ HORIZONS = (1, 3, 5, 10, 21, 42, 63)
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--ticker", default="CRWV")
+    parser.add_argument(
+        "--tickers",
+        nargs="+",
+        default=None,
+        help="tickers to include. Defaults to every ticker in the events file, "
+        "so a universe run needs no flag at all",
+    )
     parser.add_argument("--benchmark", default="QQQ", help="market proxy for abnormal returns")
     parser.add_argument("--events", default=os.path.join(REPO_ROOT, "data", "crwv_earnings.csv"))
     parser.add_argument("--start", default="2025-03-28", help="CRWV IPO date")
@@ -78,25 +85,55 @@ def main() -> int:
     args = parse_args()
     end = args.end or pd.Timestamp.today().strftime("%Y-%m-%d")
     events = load_events(args.events)
-    print(f"Loaded {len(events)} earnings events for {args.ticker}\n")
+
+    # The events file is the source of truth for the universe unless the
+    # caller narrows it, so adding a ticker means adding its rows, not
+    # remembering to pass another flag.
+    universe = args.tickers or sorted({e.ticker for e in events})
+    print(
+        f"Loaded {len(events)} events across {len(universe)} tickers: "
+        f"{', '.join(universe)}\n"
+    )
 
     try:
-        prices = load_prices(args.ticker, args.start, end, allow_download=not args.offline)
         benchmark = load_prices(args.benchmark, args.start, end, allow_download=not args.offline)
     except DataUnavailable as exc:
-        print(f"Price data unavailable: {exc}\n", file=sys.stderr)
+        print(f"Benchmark unavailable: {exc}\n", file=sys.stderr)
         return report_qualitative(events)
 
-    findings = check_prices(args.ticker, prices) + check_prices(args.benchmark, benchmark)
-    findings += check_events(events, prices, max(HORIZONS))
+    findings = check_prices(args.benchmark, benchmark) + check_implied_coverage(events)
+    results, skipped = [], []
 
-    results = run_event_study(events, prices, benchmark, HORIZONS)
+    for ticker in universe:
+        ticker_events = [e for e in events if e.ticker == ticker]
+        if not ticker_events:
+            skipped.append(f"{ticker}: no events in {os.path.basename(args.events)}")
+            continue
+        try:
+            prices = load_prices(ticker, args.start, end, allow_download=not args.offline)
+        except DataUnavailable as exc:
+            # One missing series must not abort a universe run.
+            skipped.append(f"{ticker}: {exc}")
+            continue
+
+        findings += check_prices(ticker, prices)
+        findings += check_events(ticker_events, prices, max(HORIZONS))
+        results += run_event_study(ticker_events, prices, benchmark, HORIZONS)
+
+    for problem in skipped:
+        print(f"  [skipped] {problem}\n", file=sys.stderr)
+
     if not results:
-        print("No events fell inside the price series.", file=sys.stderr)
+        if len(universe) == 1:
+            print("No usable price data.\n", file=sys.stderr)
+            return report_qualitative(events)
+        print("No events fell inside any price series.", file=sys.stderr)
         return 1
 
     # Power is judged on the horizon the thesis is about (~60 calendar days),
-    # using a clustering-adjusted sample size.
+    # using a clustering-adjusted sample size. Pooling tickers is what makes
+    # this check passable - and also what makes the clustering penalty real,
+    # since names report in the same crowded weeks.
     verdict_horizon = 42
     signed = [
         r.signal(args.signal, args.threshold) * r.drift[verdict_horizon]
@@ -110,11 +147,17 @@ def main() -> int:
     can_conclude = report(findings, strict=not args.no_strict)
     print()
 
+    if len(universe) > 1:
+        print(f"Per-ticker coverage (signal: {args.signal})\n")
+        print(_coverage(results, args).to_string(index=False))
+        print()
+
     print("Per-event announcement reaction and drift (abnormal, vs "
           f"{args.benchmark})\n")
     per_event = pd.DataFrame(
         [
             {
+                "ticker": r.event.ticker,
                 "quarter": r.event.fiscal_quarter,
                 "event_day": r.event_day.date(),
                 "beta": round(r.beta, 2),
@@ -176,6 +219,29 @@ def main() -> int:
         "cross-sectional effect; a single ticker cannot confirm or refute it."
     )
     return 0
+
+
+def _coverage(results, args) -> pd.DataFrame:
+    """How many events each ticker contributed, and how many fired the signal.
+
+    Worth seeing before any aggregate: if one name supplies most of the firing
+    events, the pooled result is that name's result wearing a universe costume.
+    """
+    rows = {}
+    for result in results:
+        row = rows.setdefault(
+            result.event.ticker, {"ticker": result.event.ticker, "events": 0, "fired": 0}
+        )
+        row["events"] += 1
+        if result.signal(args.signal, args.threshold):
+            row["fired"] += 1
+
+    frame = pd.DataFrame(rows.values()).sort_values("fired", ascending=False)
+    total = frame["fired"].sum()
+    frame["share_of_signals"] = (
+        frame["fired"].map(lambda f: f"{f / total:.0%}") if total else "n/a"
+    )
+    return frame
 
 
 def report_qualitative(events) -> int:
