@@ -187,3 +187,19 @@ def test_report_suppresses_a_verdict_on_failure(capsys):
 
     # Non-strict mode is the explicit opt-out.
     assert report(findings, strict=False) is True
+
+
+def test_thin_pre_event_history_warns():
+    """Prices starting near the first event silently disable the sigma signal."""
+    prices = clean_prices()
+    early = EarningsEvent("X", "Q1", prices.index[20], "amc")
+    late = EarningsEvent("X", "Q2", prices.index[200], "amc")
+
+    findings = check_events([early, late], prices, 42)
+    warns = levels(findings, WARN)
+    assert any("prior sessions" in f.detail for f in warns)
+    assert levels(findings, FAIL) == []
+
+    # Both events well clear of the start: no warning.
+    ok = [EarningsEvent("X", "Q1", prices.index[150], "amc")]
+    assert not any("prior sessions" in f.detail for f in check_events(ok, prices, 42))

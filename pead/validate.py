@@ -21,6 +21,7 @@ import numpy as np
 import pandas as pd
 
 from .data import EarningsEvent
+from .eventstudy import EST_END, VOL_WINDOW
 
 FAIL, WARN, PASS = "FAIL", "WARN", "PASS"
 
@@ -28,6 +29,10 @@ FAIL, WARN, PASS = "FAIL", "WARN", "PASS"
 # sample can only detect something bigger than this, it cannot detect PEAD.
 MAX_PLAUSIBLE_EFFECT = 0.05
 TARGET_T = 2.0
+
+# Sessions of history an event needs before the sigma signal can be computed:
+# the volatility window plus the gap it leaves before the event.
+MIN_PRE_EVENT_SESSIONS = VOL_WINDOW + abs(EST_END)
 
 
 @dataclass
@@ -114,6 +119,24 @@ def check_events(
         implied = event.implied_move_pct
         if implied is not None and not 0.01 <= implied <= 0.60:
             out.append(Finding(FAIL, tag, f"implied move of {implied:.1%} is outside a believable range"))
+
+    # Too little history *before* an event is the quiet failure: the market
+    # model falls back to beta=1 and the sigma signal cannot be computed at
+    # all, so events silently stop firing rather than erroring.
+    thin = [
+        e for e in events if len(sessions[sessions < e.announce_date]) < MIN_PRE_EVENT_SESSIONS
+    ]
+    if thin:
+        out.append(
+            Finding(
+                WARN,
+                f"{events[0].ticker} history",
+                f"{len(thin)}/{len(events)} events have under {MIN_PRE_EVENT_SESSIONS} "
+                "prior sessions; sigma_move cannot fire for them and the market "
+                "model falls back to a plain excess return. Load prices starting "
+                "at least a year before your first event",
+            )
+        )
 
     dates = [e.announce_date for e in events]
     label = f"{events[0].ticker} events"

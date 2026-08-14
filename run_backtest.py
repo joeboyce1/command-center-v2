@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
-"""Backtest post-earnings announcement drift for a single ticker.
+"""Backtest post-earnings announcement drift across a universe of tickers.
 
-    python run_backtest.py --ticker CRWV --benchmark QQQ
+    python run_backtest.py --events data/universe.csv --benchmark QQQ
 
-With network access the price series is pulled via yfinance and cached under
-data/prices/. Without it, drop a CSV of `date,close` at data/prices/<TICKER>.csv
-and the study runs off that. If no price series is available at all the script
-falls back to the qualitative event table so the sample is still visible.
+Every ticker in the events file is included and the results are pooled, which
+is the only way the statistical-power gate ever opens. `--tickers` narrows the
+run when you want a single name.
+
+With network access the price series are pulled via yfinance and cached under
+data/prices/. Without it, drop a Yahoo Finance CSV export (or any file with
+date and close columns) at data/prices/<TICKER>.csv and pass --offline. If no
+price series is available at all the script falls back to the qualitative
+event table so the sample is still visible.
 """
 
 from __future__ import annotations
@@ -43,7 +48,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--benchmark", default="QQQ", help="market proxy for abnormal returns")
     parser.add_argument("--events", default=os.path.join(REPO_ROOT, "data", "crwv_earnings.csv"))
-    parser.add_argument("--start", default="2025-03-28", help="CRWV IPO date")
+    parser.add_argument(
+        "--start",
+        default="1990-01-01",
+        help="earliest price date to load. The default keeps everything; "
+        "raising it silently discards events before it",
+    )
     parser.add_argument("--end", default=None, help="defaults to today")
     parser.add_argument("--offline", action="store_true", help="never hit the network")
     parser.add_argument(
