@@ -245,6 +245,13 @@ multiple, and cumulative abnormal drift at +1/+5/+10/+21/+42/+63 sessions, then
 signed-drift summaries for four signal definitions: excess-move (yours),
 reaction sign, revenue surprise and EPS surprise.
 
+`--report out.html` additionally writes a scannable table — ticker, the move on
+the session after the release, the move over the next 30 and 60 days, and
+whether it kept going — with a ticker filter and a big-moves-only toggle. It
+carries the events only; the verdict, the gates and the statistics stay in the
+terminal, because a page built to be skimmed is the wrong place to put a
+conclusion someone might skim past.
+
 `--threshold` sets how far past the bar the reaction must go
 before the signal fires. 1.0 means any break; 1.3 means 30% beyond.
 

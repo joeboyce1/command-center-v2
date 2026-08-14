@@ -61,20 +61,22 @@ RULES — these are the point of the exercise, not boilerplate:
 
 REQUIRED OUTPUT:
 
-Pass --report report.html to run_backtest.py. That writes a self-contained page
-carrying the verdict, the data-quality findings, the drift chart, the per-ticker
-coverage and the full event table, all generated from the study objects. Publish
-that file as an artifact and give me the link. Do not rebuild the tables by hand
-and do not retype any figure into your reply — the whole point is that the page
-and the run cannot disagree.
+Pass --report report.html to run_backtest.py. That writes a self-contained
+table - one row per event, showing the ticker, the move on the session after
+the release, the move over the next 30 and 60 days, and whether it kept going.
+Publish that file as an artifact and give me the link. Do not rebuild the table
+by hand and do not retype any figure into your reply — the whole point is that
+the page and the run cannot disagree.
 
-Then, in chat, add only what the page cannot carry:
-  a. Contradicting events and the worst single-event loss.
-  b. Per-field provenance: prices, earnings dates, AMC/BMO timing, implied
+The page is deliberately just the events. The verdict, the data-quality gates
+and the statistics stay in the terminal output, so report these in chat:
+  a. The verdict line and the data-quality findings, verbatim from the run.
+  b. Contradicting events and the worst single-event loss.
+  c. Per-field provenance: prices, earnings dates, AMC/BMO timing, implied
      moves — where each came from and how confident you are.
-  c. What would falsify this: the specific result that would make you abandon
+  d. What would falsify this: the specific result that would make you abandon
      the thesis.
-  d. What you could not verify.
+  e. What you could not verify.
 
 If the run suppressed the verdict, say so plainly in chat as well — the page
 will show it, but it should not be something the reader has to notice.

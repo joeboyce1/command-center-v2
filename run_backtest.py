@@ -24,7 +24,7 @@ import pandas as pd
 
 from pead.data import DataUnavailable, load_events, load_prices
 from pead.eventstudy import DEFAULT_THRESHOLDS, run_event_study, summarize
-from pead.report import ReportContext, render
+from pead.report import render, rows_from_results
 from pead.validate import (
     check_events,
     check_implied_coverage,
@@ -286,32 +286,22 @@ def report_qualitative(events) -> int:
 
 
 def _write_report(args, events, results, findings, can_conclude, n_eff, skipped, end) -> None:
-    """Render the HTML report from the same objects the terminal output uses."""
-    coverage = _coverage(results, args)
-    ctx = ReportContext(
-        signal=args.signal,
-        threshold=args.threshold,
-        benchmark=args.benchmark,
-        tickers=sorted({r.event.ticker for r in results}),
-        verdict_horizon=42,
-        findings=findings,
-        summary=summarize(results, args.signal, HORIZONS, args.threshold),
-        coverage=coverage,
-        per_event=_per_event_frame(results),
-        can_conclude=can_conclude,
-        n_events_total=len(results),
-        effective_n=n_eff,
-        date_range=(min(r.event_day for r in results).date().isoformat(), end),
-        skipped=skipped,
+    """Write the scannable per-event table."""
+    rows = rows_from_results(results, args.signal, args.threshold)
+    span = f"{min(r.event_day for r in results).date()} to {end}"
+    subtitle = (
+        f"{len({r.event.ticker for r in results})} tickers, {span}. "
+        f"Big move = {args.signal} at "
+        f"{args.threshold if args.threshold is not None else DEFAULT_THRESHOLDS.get(args.signal)}."
     )
     with open(args.report, "w") as handle:
-        handle.write(render(ctx))
+        handle.write(render(rows, subtitle))
     print(f"Wrote report to {args.report}\n")
 
 
 def _per_event_frame(results) -> pd.DataFrame:
-    """One row per event. Shared by the terminal table and the report so
-    the two can never disagree."""
+    """One row per event for the terminal table, with the full detail the
+    scannable HTML report deliberately leaves out."""
     return pd.DataFrame(
         [
             {
@@ -340,6 +330,7 @@ def _per_event_frame(results) -> pd.DataFrame:
             for r in results
         ]
     )
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
