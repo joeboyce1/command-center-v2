@@ -40,9 +40,51 @@ class Finding:
     level: str
     check: str
     detail: str
+    # Findings raised once per ticker say the same thing N times. Tagging them
+    # with a shared group lets the reports collapse them into one line, so a
+    # universe run does not bury its real failures under repetition.
+    group: str | None = None
+    subject: str | None = None
 
     def __str__(self) -> str:
         return f"[{self.level}] {self.check}: {self.detail}"
+
+
+def collapse(findings: list[Finding]) -> list[Finding]:
+    """Merge grouped findings into one line each, preserving order."""
+    out: list[Finding] = []
+    seen: dict[str, int] = {}
+
+    for finding in findings:
+        if finding.group is None:
+            out.append(finding)
+            continue
+        if finding.group not in seen:
+            seen[finding.group] = len(out)
+            out.append(
+                Finding(finding.level, finding.check, finding.detail, finding.group,
+                        finding.subject)
+            )
+            continue
+        # Merge into the first of its group, worst level wins.
+        index = seen[finding.group]
+        existing = out[index]
+        subjects = f"{existing.subject}, {finding.subject}"
+        level = FAIL if FAIL in (existing.level, finding.level) else existing.level
+        out[index] = Finding(level, finding.group, finding.detail, finding.group, subjects)
+
+    for index in seen.values():
+        finding = out[index]
+        if finding.subject and "," in finding.subject:
+            count = finding.subject.count(",") + 1
+            out[index] = Finding(
+                finding.level,
+                finding.group,
+                f"{count} tickers ({finding.subject}) - {finding.detail}",
+                finding.group,
+                finding.subject,
+            )
+    return out
 
 
 def check_prices(ticker: str, prices: pd.Series, max_gap_days: int = 5) -> list[Finding]:
@@ -113,6 +155,8 @@ def check_events(
                     tag,
                     f"only {len(later)} sessions after the event; the +{max_horizon} "
                     "horizon will be dropped for this event",
+                    group="short post-event history",
+                    subject=event.ticker,
                 )
             )
 
@@ -131,10 +175,12 @@ def check_events(
             Finding(
                 WARN,
                 f"{events[0].ticker} history",
-                f"{len(thin)}/{len(events)} events have under {MIN_PRE_EVENT_SESSIONS} "
-                "prior sessions; sigma_move cannot fire for them and the market "
-                "model falls back to a plain excess return. Load prices starting "
-                "at least a year before your first event",
+                f"events with under {MIN_PRE_EVENT_SESSIONS} prior sessions; "
+                "sigma_move cannot fire for them and the market model falls back "
+                "to a plain excess return. Load prices starting at least a year "
+                "before your first event",
+                group="thin pre-event history",
+                subject=events[0].ticker,
             )
         )
 
@@ -227,6 +273,7 @@ def effective_sample_size(event_days: list[pd.Timestamp], intra_cluster_corr: fl
 
 def report(findings: list[Finding], strict: bool = True, max_passes: int = 6) -> bool:
     """Print findings. Returns True when it is safe to report a verdict."""
+    findings = collapse(findings)
     fails = [f for f in findings if f.level == FAIL]
     warns = [f for f in findings if f.level == WARN]
     passes = [f for f in findings if f.level == PASS]

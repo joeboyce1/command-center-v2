@@ -24,6 +24,7 @@ import pandas as pd
 
 from pead.data import DataUnavailable, load_events, load_prices
 from pead.eventstudy import DEFAULT_THRESHOLDS, run_event_study, summarize
+from pead.report import ReportContext, render
 from pead.validate import (
     check_events,
     check_implied_coverage,
@@ -56,6 +57,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--end", default=None, help="defaults to today")
     parser.add_argument("--offline", action="store_true", help="never hit the network")
+    parser.add_argument(
+        "--report",
+        default=None,
+        metavar="PATH",
+        help="also write a self-contained HTML report to PATH",
+    )
     parser.add_argument(
         "--threshold",
         type=float,
@@ -157,6 +164,9 @@ def main() -> int:
     can_conclude = report(findings, strict=not args.no_strict)
     print()
 
+    if args.report:
+        _write_report(args, events, results, findings, can_conclude, n_eff, skipped, end)
+
     if len(universe) > 1:
         print(f"Per-ticker coverage (signal: {args.signal})\n")
         print(_coverage(results, args).to_string(index=False))
@@ -164,34 +174,7 @@ def main() -> int:
 
     print("Per-event announcement reaction and drift (abnormal, vs "
           f"{args.benchmark})\n")
-    per_event = pd.DataFrame(
-        [
-            {
-                "ticker": r.event.ticker,
-                "quarter": r.event.fiscal_quarter,
-                "event_day": r.event_day.date(),
-                "beta": round(r.beta, 2),
-                "announce_raw": f"{r.announcement_raw:+.2%}",
-                "announce_ar": f"{r.announcement_ar:+.2%}",
-                "implied": (
-                    f"{r.event.implied_move_pct:.1%}" if r.event.implied_move_pct else "n/a"
-                ),
-                "x_implied": (
-                    f"{r.implied_multiple:.2f}x" if r.implied_multiple is not None else "n/a"
-                ),
-                "sigma": (
-                    f"{r.sigma_multiple:.1f}sd" if r.sigma_multiple is not None else "n/a"
-                ),
-                "x_earn_vol": (
-                    f"{r.earnings_vol_multiple:.2f}x"
-                    if r.earnings_vol_multiple is not None
-                    else "n/a"
-                ),
-                **{f"car_+{h}d": f"{r.drift[h]:+.2%}" for h in HORIZONS if h in r.drift},
-            }
-            for r in results
-        ]
-    )
+    per_event = _per_event_frame(results)
     print(per_event.to_string(index=False))
 
     if not can_conclude:
@@ -299,6 +282,64 @@ def report_qualitative(events) -> int:
     )
     return 0
 
+
+
+
+def _write_report(args, events, results, findings, can_conclude, n_eff, skipped, end) -> None:
+    """Render the HTML report from the same objects the terminal output uses."""
+    coverage = _coverage(results, args)
+    ctx = ReportContext(
+        signal=args.signal,
+        threshold=args.threshold,
+        benchmark=args.benchmark,
+        tickers=sorted({r.event.ticker for r in results}),
+        verdict_horizon=42,
+        findings=findings,
+        summary=summarize(results, args.signal, HORIZONS, args.threshold),
+        coverage=coverage,
+        per_event=_per_event_frame(results),
+        can_conclude=can_conclude,
+        n_events_total=len(results),
+        effective_n=n_eff,
+        date_range=(min(r.event_day for r in results).date().isoformat(), end),
+        skipped=skipped,
+    )
+    with open(args.report, "w") as handle:
+        handle.write(render(ctx))
+    print(f"Wrote report to {args.report}\n")
+
+
+def _per_event_frame(results) -> pd.DataFrame:
+    """One row per event. Shared by the terminal table and the report so
+    the two can never disagree."""
+    return pd.DataFrame(
+        [
+            {
+                "ticker": r.event.ticker,
+                "quarter": r.event.fiscal_quarter,
+                "event_day": r.event_day.date(),
+                "beta": round(r.beta, 2),
+                "announce_raw": f"{r.announcement_raw:+.2%}",
+                "announce_ar": f"{r.announcement_ar:+.2%}",
+                "implied": (
+                    f"{r.event.implied_move_pct:.1%}" if r.event.implied_move_pct else "n/a"
+                ),
+                "x_implied": (
+                    f"{r.implied_multiple:.2f}x" if r.implied_multiple is not None else "n/a"
+                ),
+                "sigma": (
+                    f"{r.sigma_multiple:.1f}sd" if r.sigma_multiple is not None else "n/a"
+                ),
+                "x_earn_vol": (
+                    f"{r.earnings_vol_multiple:.2f}x"
+                    if r.earnings_vol_multiple is not None
+                    else "n/a"
+                ),
+                **{f"car_+{h}d": f"{r.drift[h]:+.2%}" for h in HORIZONS if h in r.drift},
+            }
+            for r in results
+        ]
+    )
 
 if __name__ == "__main__":
     raise SystemExit(main())

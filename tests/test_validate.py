@@ -20,6 +20,7 @@ from pead.validate import (
     check_implied_coverage,
     check_power,
     check_prices,
+    collapse,
     effective_sample_size,
     min_detectable_effect,
     report,
@@ -203,3 +204,36 @@ def test_thin_pre_event_history_warns():
     # Both events well clear of the start: no warning.
     ok = [EarningsEvent("X", "Q1", prices.index[150], "amc")]
     assert not any("prior sessions" in f.detail for f in check_events(ok, prices, 42))
+
+
+def test_collapse_merges_grouped_findings():
+    """Eight tickers raising the same warning must print as one line."""
+    findings = [
+        Finding(WARN, f"{t} history", "thin history", group="thin", subject=t)
+        for t in ("AAA", "BBB", "CCC")
+    ]
+    merged = collapse(findings)
+
+    assert len(merged) == 1
+    assert "3 tickers" in merged[0].detail
+    assert "AAA, BBB, CCC" in merged[0].detail
+
+
+def test_collapse_leaves_ungrouped_findings_alone():
+    findings = [
+        Finding(WARN, "a", "one"),
+        Finding(FAIL, "b", "two"),
+        Finding(WARN, "c", "three", group="g", subject="X"),
+    ]
+    merged = collapse(findings)
+    assert len(merged) == 3
+    # A lone group member keeps its original wording.
+    assert merged[2].detail == "three"
+
+
+def test_collapse_takes_the_worst_level_in_a_group():
+    findings = [
+        Finding(WARN, "a", "d", group="g", subject="A"),
+        Finding(FAIL, "b", "d", group="g", subject="B"),
+    ]
+    assert collapse(findings)[0].level == FAIL

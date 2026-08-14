@@ -60,15 +60,24 @@ RULES — these are the point of the exercise, not boilerplate:
    confident you are. Mark anything you could not verify.
 
 REQUIRED OUTPUT:
-  a. The data-quality report, unedited.
-  b. Per-event table: event day, raw and abnormal reaction, the multiple that
-     fired the signal (sigma / x-implied / x-earnings-vol), CAR at +21d and +42d.
-  c. Contradicting events and worst-case single-event loss.
-  d. Aggregate signed drift with a date-clustered t-stat — or an explicit
-     statement that the sample cannot support one.
-  e. What would falsify this: the specific result that would make you abandon
+
+Pass --report report.html to run_backtest.py. That writes a self-contained page
+carrying the verdict, the data-quality findings, the drift chart, the per-ticker
+coverage and the full event table, all generated from the study objects. Publish
+that file as an artifact and give me the link. Do not rebuild the tables by hand
+and do not retype any figure into your reply — the whole point is that the page
+and the run cannot disagree.
+
+Then, in chat, add only what the page cannot carry:
+  a. Contradicting events and the worst single-event loss.
+  b. Per-field provenance: prices, earnings dates, AMC/BMO timing, implied
+     moves — where each came from and how confident you are.
+  c. What would falsify this: the specific result that would make you abandon
      the thesis.
-  f. What you could not verify.
+  d. What you could not verify.
+
+If the run suppressed the verdict, say so plainly in chat as well — the page
+will show it, but it should not be something the reader has to notice.
 
 Do not give a buy/sell recommendation. The deliverable is whether the effect
 survives measurement, not what to do about it.
