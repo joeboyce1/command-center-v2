@@ -78,6 +78,48 @@ almost every time. The market has not been trading the reported quarter at all
 your reaction-based definition is the better-specified one for this name: the
 announcement move contains the surprise, and the reported beat does not.
 
+## Scaling to other stocks
+
+Run `python power_analysis.py` for the sizing. The short version: this has to be
+tested cross-sectionally, because a single name can never settle it.
+
+At a per-event 60-day dispersion of 30% — normal for a high-volatility tech name
+— detecting a 2% mean signed drift needs about **900 events**, roughly 45 names
+over five years. At 20% dispersion and a 3% effect it drops to about 178. With
+six events on one ticker, only an effect larger than **24% per event** would be
+detectable, which is 5–15x anything PEAD actually delivers.
+
+Then subtract the clustering penalty. Earnings land in four crowded windows a
+year, so same-week events share macro and sector shocks and are not independent
+draws. At 50 events a week and an intra-cluster correlation of 0.15, 400 nominal
+events behave like 48. Standard errors must be clustered by event date or the
+backtest will look significant when it is not — this is the single most common
+way a PEAD backtest fools its author.
+
+The binding practical constraint is **historical implied moves**. Prices and
+earnings dates are cheap; a point-in-time record of the pre-earnings ATM
+straddle is not. Realistic sources are OptionMetrics IvyDB (the academic
+standard), ORATS, CBOE DataShop or Polygon's options history. A workable free
+proxy is to estimate the expected move from the stock's own realized earnings-day
+volatility, at the cost of no longer testing the thing you meant to test — the
+market's ex-ante forecast.
+
+Three other things that will quietly break a cross-sectional version:
+
+* **Survivorship.** A universe pulled from today's index membership omits every
+  delisted name. Post-earnings crashes are exactly what gets delisted, so this
+  biases the downside-break results upward.
+* **Point-in-time consensus.** Estimate data gets restated. Using today's record
+  of what consensus was leaks information backwards.
+* **Costs and borrow.** Names that break their implied move are volatile, wide
+  and often hard to borrow. Half the signals in the CRWV sample are shorts. A
+  gross edge of 2% per event does not survive careless execution assumptions.
+
+Where the effect is most likely to survive, based on the published record:
+smaller caps, thin analyst coverage, high idiosyncratic volatility, and the
+announcement-return-conditioned version rather than the SUE version. Drift has
+decayed materially in large caps since the 2000s.
+
 ## Running it
 
 ```bash
