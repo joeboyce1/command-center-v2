@@ -108,6 +108,64 @@ def test_signed_summary_flips_on_a_negative_signal():
     assert table.loc[0, "hit_rate"] == 1.0
 
 
+def _event_with_implied(implied: float) -> EarningsEvent:
+    return EarningsEvent(
+        "X", "Q1", pd.Timestamp("2025-06-10"), "amc", implied_move_pct=implied
+    )
+
+
+def test_excess_move_signal_fires_only_past_the_implied_move():
+    """A 20% break of a 12% implied move trades; the same move vs 25% does not."""
+    stock, market = build_series()
+    stock = inject(stock, pd.Timestamp("2025-06-11"), 1, -0.20)
+
+    (fires,) = run_event_study([_event_with_implied(0.12)], stock, market, horizons=(21,))
+    assert fires.implied_multiple == pytest.approx(0.20 / 0.12, abs=1e-3)
+    assert fires.signal("excess_move") == -1  # short, in the direction of the move
+
+    (quiet,) = run_event_study([_event_with_implied(0.25)], stock, market, horizons=(21,))
+    assert quiet.signal("excess_move") == 0  # inside the implied move, no trade
+
+
+def test_excess_move_threshold_is_configurable():
+    stock, market = build_series()
+    stock = inject(stock, pd.Timestamp("2025-06-11"), 1, 0.18)
+    (result,) = run_event_study([_event_with_implied(0.15)], stock, market, horizons=(21,))
+
+    # The move is 1.2x the implied move. Exact-boundary thresholds are left
+    # untested on purpose: 0.18/0.15 is 1.1999... in binary floating point, so
+    # asserting behaviour exactly at the threshold would be testing float
+    # representation rather than the signal.
+    assert result.implied_multiple == pytest.approx(1.2, abs=1e-6)
+    assert result.signal("excess_move", implied_threshold=1.0) == 1
+    assert result.signal("excess_move", implied_threshold=1.15) == 1
+    assert result.signal("excess_move", implied_threshold=1.5) == 0
+
+
+def test_excess_move_uses_the_raw_move_not_the_abnormal_one():
+    """The straddle prices the total move, so the filter must use raw returns."""
+    stock, market = build_series()
+    start = pd.Timestamp("2025-06-11")
+    stock = inject(stock, start, 1, 0.20)
+    market = inject(market, start, 1, 0.20)  # all of it is market-driven
+
+    (result,) = run_event_study([_event_with_implied(0.12)], stock, market, horizons=(21,))
+    assert result.announcement_raw == pytest.approx(0.20, abs=1e-9)
+    assert result.announcement_ar == pytest.approx(0.0, abs=1e-9)
+    # Fires on the raw 20% even though the abnormal move is zero.
+    assert result.implied_multiple == pytest.approx(0.20 / 0.12, abs=1e-3)
+    assert result.signal("excess_move") == 1
+
+
+def test_excess_move_signal_is_none_without_an_implied_move():
+    stock, market = build_series()
+    stock = inject(stock, pd.Timestamp("2025-06-11"), 1, -0.20)
+    event = EarningsEvent("X", "Q1", pd.Timestamp("2025-06-10"), "amc")
+    (result,) = run_event_study([event], stock, market, horizons=(21,))
+    assert result.implied_multiple is None
+    assert result.signal("excess_move") is None
+
+
 def test_market_model_estimates_beta_and_nets_out_high_beta_moves():
     """A 2x-beta stock with a noisy benchmark: beta is recovered, drift is ~0."""
     rng = np.random.default_rng(7)

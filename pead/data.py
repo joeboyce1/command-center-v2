@@ -98,6 +98,7 @@ class EarningsEvent:
     revenue_consensus: float | None = None
     eps_actual: float | None = None
     eps_consensus: float | None = None
+    implied_move_pct: float | None = None
     note: str = ""
 
     @property
@@ -133,6 +134,7 @@ def load_events(path: str) -> list[EarningsEvent]:
                 revenue_consensus=_opt(row.get("revenue_consensus")),
                 eps_actual=_opt(row.get("eps_actual")),
                 eps_consensus=_opt(row.get("eps_consensus")),
+                implied_move_pct=_opt(row.get("implied_move_pct")),
                 note=str(row.get("note") or ""),
             )
         )

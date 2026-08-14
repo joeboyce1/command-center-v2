@@ -37,11 +37,35 @@ class EventResult:
     alpha: float
     beta_source: str
     announcement_ar: float
+    announcement_raw: float = 0.0
     drift: dict[int, float] = field(default_factory=dict)
     raw_drift: dict[int, float] = field(default_factory=dict)
 
-    def signal(self, mode: str) -> float | None:
-        """Direction the PEAD trade would take, per signal definition."""
+    @property
+    def implied_multiple(self) -> float | None:
+        """How many times the options-implied move the stock actually moved.
+
+        Compared on the raw move, not the abnormal one: the straddle prices the
+        stock's total move, not its move net of the benchmark.
+        """
+        implied = self.event.implied_move_pct
+        if not implied:
+            return None
+        return abs(self.announcement_raw) / implied
+
+    def signal(self, mode: str, implied_threshold: float = 1.0) -> float | None:
+        """Direction the PEAD trade would take, per signal definition.
+
+        Returns 0 when a signal is defined but does not fire (no trade), and
+        None when it cannot be evaluated for lack of data.
+        """
+        if mode == "excess_move":
+            multiple = self.implied_multiple
+            if multiple is None:
+                return None
+            if multiple < implied_threshold:
+                return 0.0
+            return np.sign(self.announcement_raw)
         if mode == "reaction":
             return np.sign(self.announcement_ar)
         if mode == "revenue":
@@ -127,6 +151,7 @@ def run_event_study(
             alpha=alpha,
             beta_source=source,
             announcement_ar=float(abnormal.iloc[idx]),
+            announcement_raw=float(stock_ret.iloc[idx]),
         )
 
         # Drift starts the session *after* the announcement is priced.
@@ -144,7 +169,12 @@ def run_event_study(
     return results
 
 
-def summarize(results: list[EventResult], signal_mode: str, horizons: tuple[int, ...]) -> pd.DataFrame:
+def summarize(
+    results: list[EventResult],
+    signal_mode: str,
+    horizons: tuple[int, ...],
+    implied_threshold: float = 1.0,
+) -> pd.DataFrame:
     """Aggregate signed drift across events for one signal definition.
 
     The signed drift is what a PEAD trader would earn: go long after a positive
@@ -155,7 +185,7 @@ def summarize(results: list[EventResult], signal_mode: str, horizons: tuple[int,
     for horizon in horizons:
         signed, hit = [], []
         for result in results:
-            direction = result.signal(signal_mode)
+            direction = result.signal(signal_mode, implied_threshold)
             if direction is None or horizon not in result.drift or direction == 0:
                 continue
             value = direction * result.drift[horizon]

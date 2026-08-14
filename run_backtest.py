@@ -32,6 +32,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--start", default="2025-03-28", help="CRWV IPO date")
     parser.add_argument("--end", default=None, help="defaults to today")
     parser.add_argument("--offline", action="store_true", help="never hit the network")
+    parser.add_argument(
+        "--implied-threshold",
+        type=float,
+        default=1.0,
+        help="the excess-move signal fires when |reaction| exceeds this multiple "
+        "of the options-implied move (1.0 = any break of the implied move)",
+    )
     return parser.parse_args()
 
 
@@ -61,7 +68,14 @@ def main() -> int:
                 "quarter": r.event.fiscal_quarter,
                 "event_day": r.event_day.date(),
                 "beta": round(r.beta, 2),
+                "announce_raw": f"{r.announcement_raw:+.2%}",
                 "announce_ar": f"{r.announcement_ar:+.2%}",
+                "implied": (
+                    f"{r.event.implied_move_pct:.1%}" if r.event.implied_move_pct else "n/a"
+                ),
+                "x_implied": (
+                    f"{r.implied_multiple:.2f}x" if r.implied_multiple is not None else "n/a"
+                ),
                 **{f"car_+{h}d": f"{r.drift[h]:+.2%}" for h in HORIZONS if h in r.drift},
             }
             for r in results
@@ -70,11 +84,16 @@ def main() -> int:
     print(per_event.to_string(index=False))
 
     for mode, label in (
+        (
+            "excess_move",
+            f"Signal = reaction broke {args.implied_threshold:.2f}x the implied "
+            "move; trade in that direction",
+        ),
         ("reaction", "Signal = sign of the announcement-day move (earnings momentum)"),
         ("revenue", "Signal = sign of the revenue surprise"),
         ("eps", "Signal = sign of the EPS surprise"),
     ):
-        table = summarize(results, mode, HORIZONS)
+        table = summarize(results, mode, HORIZONS, args.implied_threshold)
         if table.empty:
             continue
         print(f"\n{label}")
@@ -99,7 +118,23 @@ def report_qualitative(events) -> int:
     path = os.path.join(REPO_ROOT, "data", "crwv_observed_reactions.csv")
     print("Falling back to the reported-reaction table (no benchmark adjustment).\n")
     frame = pd.read_csv(path, comment="#")
-    print(frame[["fiscal_quarter", "event_day", "reaction_1d_pct", "drift_direction"]].to_string(index=False))
+    columns = [
+        "fiscal_quarter",
+        "event_day",
+        "reaction_1d_pct",
+        "implied_move_pct",
+        "implied_multiple",
+        "drift_30_60d_direction",
+        "confirms_thesis",
+        "confidence",
+    ]
+    print(frame[columns].to_string(index=False))
+
+    verdict = frame["confirms_thesis"].value_counts()
+    print(
+        f"\nExcess-move thesis: {verdict.get('yes', 0)} confirm, "
+        f"{verdict.get('no', 0)} contradict, {verdict.get('pending', 0)} pending."
+    )
 
     surprises = pd.DataFrame(
         [
