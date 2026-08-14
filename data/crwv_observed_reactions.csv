@@ -1,0 +1,11 @@
+# Announcement-day reactions and post-announcement drift gathered from news
+# reporting, used only when a daily price series is unavailable. These are
+# press figures, not returns computed from a price series, and they are not
+# benchmark-adjusted. Treat them as approximate.
+fiscal_quarter,event_day,reaction_1d_pct,drift_note,drift_direction,source
+Q1 FY2025,2025-05-15,-5.0,"Rallied hard after the initial dip; hit an all-time high of 187.00 on 2025-06-20",positive,"CNBC 2025-05-14; financecharts ATH date"
+Q2 FY2025,2025-08-13,-20.83,"Down 33.1% cumulatively from the 08-12 close by mid-September 2025, i.e. roughly -15% beyond the announcement move",negative,"Benzinga 2026-08; Zacks/Yahoo Finance"
+Q3 FY2025,2025-11-11,-16.31,"Kept sliding into a weak November for AI infrastructure names",negative,"Benzinga 2026-08; CNBC 2025-11-10"
+Q4 FY2025,2026-02-27,-18.51,"Traded near 80 on 02-27 but recovered to roughly 141 by the 2026-05-07 pre-earnings close",positive,"Benzinga 2026-08; tikr 2026-02-27"
+Q1 FY2026,2026-05-08,-11.40,"Fell from roughly 125 post-reaction to 90.32 by the 2026-08-11 pre-earnings close, about -28% over three months",negative,"Benzinga 2026-08; TipRanks 2026-08"
+Q2 FY2026,2026-08-12,19.3,"Only two sessions of post-event data as of 2026-08-13; drift not yet measurable",unknown,"indmoney/Quiver 2026-08-11"
